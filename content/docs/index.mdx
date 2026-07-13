@@ -1,0 +1,64 @@
+---
+title: 快速开始
+description: 安装言序，在五分钟内运行第一份中文程序。
+---
+
+言序是一门由 Rust 实现的现代中文编程语言。你可以使用中文关键字、中文标识符和全角标点，同时获得类型、容器、模块与结构化错误等工程能力。
+
+<Cards>
+  <Card title="语言参考" description="系统阅读言序语法与运行语义" href="/language/" />
+  <Card title="运行时架构" description="了解词法、AST、解释器与模块系统" href="/architecture/" />
+  <Card title="下载中心" description="获取 Windows、macOS 与 Linux 发行版" href="https://yanxulang.github.io/website/download/" />
+</Cards>
+
+## 安装
+
+### macOS 与 Linux
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/YanXuLang/language/main/scripts/install.sh | sh
+```
+
+### Windows PowerShell
+
+```powershell
+irm https://raw.githubusercontent.com/YanXuLang/language/main/scripts/install.ps1 | iex
+```
+
+安装后验证版本：
+
+```sh
+yanxu --version
+```
+
+## 第一份言序程序
+
+新建 `初见.yx`：
+
+```yanxu
+令 名字：文 为 「言序」；
+言 「你好，」 加 名字；
+```
+
+执行文卷：
+
+```sh
+yanxu 初见.yx
+```
+
+终端将输出 `你好，言序`。源码使用 UTF-8，推荐扩展名为 `.yx`。
+
+## 命令行与 REPL
+
+| 命令 | 用途 |
+| --- | --- |
+| `yanxu 文卷.yx` | 执行源码文件 |
+| `yanxu` | 进入多行交互环境 |
+| `yanxu --version` | 显示版本 |
+| `yanxu --help` | 显示命令说明 |
+
+REPL 会保留先前定义，函数、类、判断和循环可以跨多行输入。使用 `:助`、`:清`、`:载` 与 `:退` 管理会话。
+
+## 下一步
+
+阅读[语言参考](/language/)学习值、变量、流程控制、函数、类、模块、容器与错误处理，或查看[完整示例](https://github.com/YanXuLang/language/tree/main/examples)。
