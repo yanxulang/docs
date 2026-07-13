@@ -1,0 +1,16 @@
+{
+  "title": "语言指南",
+  "description": "按主题学习言序语法与运行语义。",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "basics",
+    "collections",
+    "control-flow",
+    "functions",
+    "objects",
+    "modules",
+    "errors",
+    "grammar"
+  ]
+}

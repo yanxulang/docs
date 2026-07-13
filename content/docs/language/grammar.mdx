@@ -1,0 +1,36 @@
+---
+title: 简化文法
+description: 集中查看言序声明、语句、调用与表达式的语法形式。
+---
+
+以下文法用于快速理解结构，不替代解析器实现中的完整错误恢复与优先级规则。
+
+```text
+program      → declaration* EOF ;
+declaration  → "令" IDENT type? "为" expression "；"
+             | "定" IDENT type? "为" expression "；"
+             | functionDecl
+             | classDecl
+             | importDecl
+             | statement ;
+type         → "：" TYPE_NAME ;
+functionDecl → "法" IDENT "（" parameters? "）" type? "则" declaration* "终" ;
+classDecl    → "类" IDENT "则" functionDecl* "终" ;
+importDecl   → "引" STRING ("为" | "作") IDENT "；" ;
+statement    → "置" (IDENT | member | index) "为" expression "；"
+             | "言" expression "；"
+             | "若" expression "则" declaration* ("否则" declaration*)? "终"
+             | "当" expression "则" declaration* "终"
+             | "逐" IDENT type? "于" expression "则" declaration* "终"
+             | "试" "则" declaration* "救" IDENT "则" declaration* "终"
+             | "抛" expression "；"
+             | "归" expression? "；"
+             | expression "；" ;
+call         → primary (("（" arguments? "）") | ("." IDENT) | ("【" expression "】"))* ;
+primary      → literal | IDENT | list | map | "（" expression "）" ;
+list         → "【" arguments? "】" ;
+map          → "{" (expression "：" expression) ("，" ...)* "}" ;
+expression   → 逻辑或、逻辑且、相等、比较、加减、乘除、一元、调用、原子表达式 ;
+```
+
+`#`或`//`起始至行末为注释。运算符的详细优先级见[基础语法与类型](/language/basics/#运算与优先级)。

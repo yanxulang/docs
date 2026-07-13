@@ -1,0 +1,28 @@
+---
+title: 从源码构建
+description: 构建语言核心、运行测试并找到各子项目仓库。
+---
+
+## 构建语言核心
+
+需要安装稳定版 Rust 工具链和 Git：
+
+```sh
+git clone https://github.com/YanXuLang/yanxu.git
+cd yanxu
+cargo test --all-targets --locked
+cargo install --path .
+```
+
+安装后运行`yanxu --version`确认当前终端可以找到生成的可执行文件。
+
+## 项目仓库
+
+| 项目 | 仓库 |
+| --- | --- |
+| 语言核心 | [YanXuLang/yanxu](https://github.com/YanXuLang/yanxu) |
+| 官方网站 | [YanXuLang/website](https://github.com/YanXuLang/website) |
+| 文档 | [YanXuLang/docs](https://github.com/YanXuLang/docs) |
+| VS Code 扩展 | [YanXuLang/vscode-extension](https://github.com/YanXuLang/vscode-extension) |
+
+准备修改语言核心前，建议先阅读[运行时架构](/project/architecture/)了解解析、语义检查和执行阶段的边界。

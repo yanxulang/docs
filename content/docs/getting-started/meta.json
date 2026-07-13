@@ -1,0 +1,6 @@
+{
+  "title": "开始使用",
+  "description": "完成安装，运行程序并熟悉命令行。",
+  "defaultOpen": true,
+  "pages": ["index", "installation", "first-program", "cli-repl"]
+}

@@ -1,0 +1,5 @@
+{
+  "title": "工具链",
+  "description": "编辑、构建并参与言序项目。",
+  "pages": ["index", "vscode", "source-build"]
+}

@@ -1,0 +1,26 @@
+---
+title: 安装
+description: 在 macOS、Linux 或 Windows 上安装并验证言序。
+---
+
+## macOS 与 Linux
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/YanXuLang/yanxu/main/scripts/install.sh | sh
+```
+
+## Windows PowerShell
+
+```powershell
+irm https://raw.githubusercontent.com/YanXuLang/yanxu/main/scripts/install.ps1 | iex
+```
+
+## 验证安装
+
+安装完成后查看版本：
+
+```sh
+yanxu --version
+```
+
+如果你希望参与语言实现，或安装器不适用于当前环境，请改用[从源码构建](/tooling/source-build/)。

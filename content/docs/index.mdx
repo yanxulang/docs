@@ -1,64 +1,25 @@
 ---
-title: 快速开始
-description: 安装言序，在五分钟内运行第一份中文程序。
+title: 言序文档
+description: 言序编程语言的入门指南、语言参考、工具链说明与项目设计文档。
 ---
 
 言序是一门由 Rust 实现的现代中文编程语言。你可以使用中文关键字、中文标识符和全角标点，同时获得类型、容器、模块与结构化错误等工程能力。
 
 <Cards>
-  <Card title="语言参考" description="系统阅读言序语法与运行语义" href="/language/" />
-  <Card title="运行时架构" description="了解词法、AST、解释器与模块系统" href="/architecture/" />
-  <Card title="下载中心" description="获取 Windows、macOS 与 Linux 发行版" href="https://yanxu.dev/download/" />
+  <Card title="开始使用" description="安装言序并运行第一份中文程序" href="/getting-started/" />
+  <Card title="语言指南" description="按主题学习语法、类型与运行语义" href="/language/" />
+  <Card title="工具链" description="配置编辑器并从源码构建言序" href="/tooling/" />
+  <Card title="项目设计" description="了解运行时架构与长期演进计划" href="/project/" />
 </Cards>
 
-## 安装
+## 建议阅读顺序
 
-### macOS 与 Linux
+第一次接触言序时，先完成[安装](/getting-started/installation/)和[第一份程序](/getting-started/first-program/)，再根据需要进入语言指南。语言指南按概念拆分，可以顺序阅读，也可以作为日常速查手册使用。
 
-```sh
-curl -fsSL https://raw.githubusercontent.com/YanXuLang/yanxu/main/scripts/install.sh | sh
-```
+如果你准备参与实现或工具开发，请继续阅读[从源码构建](/tooling/source-build/)和[运行时架构](/project/architecture/)。
 
-### Windows PowerShell
+## 当前版本
 
-```powershell
-irm https://raw.githubusercontent.com/YanXuLang/yanxu/main/scripts/install.ps1 | iex
-```
+文档对应言序 `0.3.0-alpha.1`。Alpha 阶段的语法和工具接口仍可能调整，升级前请留意发行说明与[长期路线图](/project/roadmap/)。
 
-安装后验证版本：
-
-```sh
-yanxu --version
-```
-
-## 第一份言序程序
-
-新建 `初见.yx`：
-
-```yanxu
-令 名字：文 为 「言序」；
-言 「你好，」 加 名字；
-```
-
-执行文卷：
-
-```sh
-yanxu 初见.yx
-```
-
-终端将输出 `你好，言序`。源码使用 UTF-8，推荐扩展名为 `.yx`。
-
-## 命令行与 REPL
-
-| 命令 | 用途 |
-| --- | --- |
-| `yanxu 文卷.yx` | 执行源码文件 |
-| `yanxu` | 进入多行交互环境 |
-| `yanxu --version` | 显示版本 |
-| `yanxu --help` | 显示命令说明 |
-
-REPL 会保留先前定义，函数、类、判断和循环可以跨多行输入。使用 `:助`、`:清`、`:载` 与 `:退` 管理会话。
-
-## 下一步
-
-阅读[语言参考](/language/)学习值、变量、流程控制、函数、类、模块、容器与错误处理，或查看[完整示例](https://github.com/YanXuLang/yanxu/tree/main/examples)。
+需要立即获取发行版时，可前往[下载中心](https://yanxu.dev/download/)；可运行示例位于[语言核心仓库](https://github.com/YanXuLang/yanxu/tree/main/examples)。
