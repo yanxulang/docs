@@ -5,7 +5,7 @@
 
 言序编程语言的独立文档项目，使用 Fumadocs、Next.js、MDX、TypeScript 和 Tailwind CSS 构建。
 
-线上文档：https://yanxulang.github.io/docs/
+线上文档：https://docs.yanxu.dev/
 
 ## 开发
 

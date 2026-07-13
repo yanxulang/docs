@@ -5,7 +5,6 @@ const withMDX = createMDX();
 /** @type {import('next').NextConfig} */
 const config = {
   output: 'export',
-  basePath: '/docs',
   trailingSlash: true,
   reactStrictMode: true,
 };

@@ -29,7 +29,7 @@ export default function DefaultSearchDialog(props: SharedProps) {
     client: oramaStaticClient({
       initOrama,
       locale,
-      from: '/docs/api/search',
+      from: '/api/search',
     }),
   });
 

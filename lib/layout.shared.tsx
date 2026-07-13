@@ -7,8 +7,8 @@ export function baseOptions(): BaseLayoutProps {
       title: appName,
     },
     links: [
-      { text: '官网', url: 'https://yanxulang.github.io/website/' },
-      { text: '下载', url: 'https://yanxulang.github.io/website/download/' },
+      { text: '官网', url: 'https://yanxu.dev/' },
+      { text: '下载', url: 'https://yanxu.dev/download/' },
     ],
     githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
   };
