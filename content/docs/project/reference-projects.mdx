@@ -31,13 +31,13 @@ yanxu 文 reference/账册分析/src target/账册分析-api.md
 
 ## yanxu-webblog
 
-[`yanxu-webblog`](https://github.com/yanxulang/yanxu-webblog)是独立的 0.1 Web 参考项目，通过递归 Git submodule 组合`yanxu-html`、`yanxu-http`、`yanxu-web`和`yanju`。它提供安全 HTML 页面、路径参数、统一中间件、JSON API、言据 API、静态文件和不占端口的集成测试。
+[`yanxu-webblog`](https://github.com/yanxulang/yanxu-webblog)是独立的 0.1 Web 参考项目，通过言包 Git 依赖组合`yanxu-html`、`yanxu-http`、`yanxu-web`和`yanju`。锁文件固定精确提交与内容校验，仓库本身不含依赖副本。项目提供安全 HTML 页面、路径参数、统一中间件、JSON API、言据 API、静态文件和不占端口的集成测试。
 
 ```sh
-git clone --recurse-submodules https://github.com/yanxulang/yanxu-webblog.git
-yanxu 包 锁 yanxu-webblog
+git clone https://github.com/yanxulang/yanxu-webblog.git
+yanbao --manifest-path yanxu-webblog install
 yanxu 试 yanxu-webblog/tests --json
-yanxu 包 运行 yanxu-webblog
+yanbao --manifest-path yanxu-webblog run
 ```
 
 完整阅读顺序和扩展练习见[博客教程](/web/webblog/)。

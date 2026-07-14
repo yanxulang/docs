@@ -36,7 +36,7 @@ yanxu-html       yanxu-http
 
 建议先掌握[函数与闭包](/language/functions/)、[容器](/language/collections/)、[类与实例](/language/objects/)、[模块](/language/modules/)和[错误处理](/language/errors/)。要理解开发服务器，再阅读[安全套接字](/language/sockets/)。
 
-所有四个仓库当前版本均为`0.1.0`，以言序核心`1.1.4`为验收基线。首版强调清晰边界和可执行参考，不把串行开发服务器描述为生产服务器。
+所有四个仓库当前版本均为`0.1.0`，语言与网络 API 以言序核心`1.1.4-A`和言包`0.1.0`为基线。该组合提供无 submodule 的锁定包模块加载边界。首版强调清晰边界和可执行参考，不把串行开发服务器描述为生产服务器。
 
 ## 推荐学习顺序
 
@@ -48,13 +48,15 @@ yanxu-html       yanxu-http
 
 ## 取得源码
 
-三个基础库可分别克隆。框架和博客包含递归子模块，务必使用`--recurse-submodules`：
+四个仓库都可以普通克隆；依赖由言包根据清单和锁文件安装：
 
 ```sh
 git clone https://github.com/yanxulang/yanxu-html.git
 git clone https://github.com/yanxulang/yanxu-http.git
-git clone --recurse-submodules https://github.com/yanxulang/yanxu-web.git
-git clone --recurse-submodules https://github.com/yanxulang/yanxu-webblog.git
+git clone https://github.com/yanxulang/yanxu-web.git
+git clone https://github.com/yanxulang/yanxu-webblog.git
+yanbao --manifest-path yanxu-web install
+yanbao --manifest-path yanxu-webblog install
 ```
 
-言序 1.1.4 的包权限要求执行期依赖源码位于清单允许的文件根内，因此当前模板使用仓库内子模块和路径依赖。公开注册表与更顺滑的 Git 依赖权限传播仍属于包生态的后续工作。
+`言序.toml`保存 Git 来源与版本要求，`言序.lock`固定精确提交和内容校验。运行时只把经过锁文件验证的包根用于模块加载，不把依赖清单中的网络、环境或进程权限合并到应用；顶层显式声明的同名依赖优先，未声明时再使用依赖包自身的传递依赖。
