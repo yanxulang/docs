@@ -11,6 +11,7 @@
     "tasks",
     "---数据与抽象---",
     "collections",
+    "binary-data",
     "objects",
     "---程序组织与可靠性---",
     "modules",
