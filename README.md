@@ -3,7 +3,7 @@
 [![CI](https://github.com/YanXuLang/docs/actions/workflows/ci.yml/badge.svg)](https://github.com/YanXuLang/docs/actions/workflows/ci.yml)
 [![Pages](https://github.com/YanXuLang/docs/actions/workflows/pages.yml/badge.svg)](https://github.com/YanXuLang/docs/actions/workflows/pages.yml)
 
-言序编程语言的独立文档项目，使用 Fumadocs、Next.js、MDX、TypeScript 和 Tailwind CSS 构建。
+言序编程语言、言据数据格式与 Web 生态的独立文档项目，使用 Fumadocs、Next.js、MDX、TypeScript 和 Tailwind CSS 构建。
 
 线上文档：https://docs.yanxu.dev/
 
@@ -29,6 +29,8 @@ content/docs/
 ├── index.mdx          # 文档总览与阅读路径
 ├── getting-started/   # 安装、第一份程序、命令行与 REPL
 ├── language/          # 语法、类型和运行语义
+├── yanju/             # 言据格式、配置校验、转换与流
+├── web/               # HTML、HTTP、Web 框架与博客教程
 ├── tooling/           # 编辑器、构建与项目仓库
 └── project/           # 运行时架构与长期路线图
 ```

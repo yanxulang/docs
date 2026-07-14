@@ -2,11 +2,18 @@ import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
 import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
 import type { LanguageRegistration } from '@shikijs/types';
 import yanxuGrammar from './syntaxes/yanxu.tmLanguage.json';
+import yanjuGrammar from './syntaxes/yanju.tmLanguage.json';
 
 const yanxuLanguage = {
   ...yanxuGrammar,
   name: 'yanxu',
   aliases: ['yx'],
+} as unknown as LanguageRegistration;
+
+const yanjuLanguage = {
+  ...yanjuGrammar,
+  name: 'yanju',
+  aliases: ['yj'],
 } as unknown as LanguageRegistration;
 
 // You can customize Zod schemas for frontmatter and `meta.json` here
@@ -27,7 +34,7 @@ export const docs = defineDocs({
 export default defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {
-      langs: [yanxuLanguage],
+      langs: [yanxuLanguage, yanjuLanguage],
       themes: {
         light: 'github-light',
         dark: 'github-dark',

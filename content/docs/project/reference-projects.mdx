@@ -1,6 +1,6 @@
 ---
-title: 1.0 参考项目
-description: 通过诗笺台和账册分析学习包依赖、对象、任务、错误、测试和 API 文档。
+title: 参考项目
+description: 通过核心参考项目与 Web 博客学习包依赖、对象、任务、测试和跨库应用设计。
 ---
 
 核心仓库`reference/`包含两个可独立锁定和执行的中等规模项目，并共享一个路径依赖包。
@@ -28,3 +28,16 @@ yanxu 文 reference/账册分析/src target/账册分析-api.md
 ```
 
 两个项目的`言序.lock`均为格式 1，并在 1.0 验收中同时经过静态检查、包运行、规格测试和文档生成。
+
+## yanxu-webblog
+
+[`yanxu-webblog`](https://github.com/yanxulang/yanxu-webblog)是独立的 0.1 Web 参考项目，通过递归 Git submodule 组合`yanxu-html`、`yanxu-http`、`yanxu-web`和`yanju`。它提供安全 HTML 页面、路径参数、统一中间件、JSON API、言据 API、静态文件和不占端口的集成测试。
+
+```sh
+git clone --recurse-submodules https://github.com/yanxulang/yanxu-webblog.git
+yanxu 包 锁 yanxu-webblog
+yanxu 试 yanxu-webblog/tests --json
+yanxu 包 运行 yanxu-webblog
+```
+
+完整阅读顺序和扩展练习见[博客教程](/web/webblog/)。

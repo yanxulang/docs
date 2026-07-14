@@ -1,0 +1,72 @@
+---
+title: yanxu-webblog：完整示例
+description: 运行并阅读一个包含安全 HTML、路径路由、中间件、JSON、言据和静态文件的最小博客。
+---
+
+[`yanxu-webblog`](https://github.com/yanxulang/yanxu-webblog)是四库集成的入门模板。它保留清晰的小文件结构，适合从数据流一路追到响应字节。
+
+## 克隆与运行
+
+仓库使用递归 Git submodule 固定框架、底层库与`yanju`：
+
+```sh
+git clone --recurse-submodules https://github.com/yanxulang/yanxu-webblog.git
+yanxu 包 锁 yanxu-webblog
+yanxu 包 运行 yanxu-webblog
+```
+
+打开[http://127.0.0.1:8787](http://127.0.0.1:8787)，或用命令检查接口：
+
+```sh
+curl -i http://127.0.0.1:8787/
+curl -i http://127.0.0.1:8787/posts/hello-yanxu
+curl -i http://127.0.0.1:8787/api/posts
+curl -i http://127.0.0.1:8787/api/posts.yj
+curl -i http://127.0.0.1:8787/static/app.css
+curl -i http://127.0.0.1:8787/health
+```
+
+监听地址可通过清单允许的环境变量覆盖：
+
+```sh
+YANXU_WEBBLOG_ADDR=127.0.0.1:9000 yanxu 包 运行 yanxu-webblog
+```
+
+## 阅读顺序
+
+```text
+src/数据.yx  ──>  src/页面.yx  ──>  src/应用.yx  ──>  src/主.yx
+领域数据           HTML 节点          路由与响应          服务器入口
+```
+
+1. `数据.yx`返回新文章容器，并按编号查询；
+2. `页面.yx`把文章转换为自动转义的 HTML 节点；
+3. `应用.yx`装配页面、JSON/言据 API、中间件、错误与静态路由；
+4. `主.yx`读取地址配置，启动持续或`--once`开发服务器；
+5. `tests/集成.yx`不打开端口，直接驱动完整应用链。
+
+## 路由清单
+
+| 方法与路径 | 结果 | 重点 |
+| --- | --- | --- |
+| `GET /` | HTML 首页 | 文档、布局、组件和文章列表。 |
+| `GET /posts/:id` | HTML 详情或 HTML 404 | 路径参数和自定义状态。 |
+| `GET /api/posts` | JSON | 标准序列化响应。 |
+| `GET /api/posts.yj` | 言据 | `yanju`序列化与媒体类型。 |
+| `GET /static/app.css` | CSS | 静态文件与媒体类型。 |
+| `GET /health` | 纯文字 | 健康检查。 |
+
+## 安全路径
+
+文章正文里的`<标签>`由`HTML.文字`转义；只有页脚固定的`&copy;`使用`HTML.原始`。一个响应中间件统一添加 CSP、`X-Content-Type-Options`与`Referrer-Policy`，静态服务拒绝目录穿越。
+
+这些是职责示例，不是生产认证。当前服务器仍是串行、一连接一请求模型。对外部署前先读[安全与路线图](/web/security-roadmap/)。
+
+## 测试与练习
+
+```sh
+yanxu 查 yanxu-webblog/src/主.yx
+yanxu 试 yanxu-webblog/tests --json
+```
+
+建议练习：新增第三篇文章，观察 HTML/JSON/言据同时变化；添加查询过滤；新增一个 JSON 404；再为新路由补集成规格。更完整的源码讲解在[`yanxu-webblog/docs`](https://github.com/yanxulang/yanxu-webblog/tree/main/docs)。

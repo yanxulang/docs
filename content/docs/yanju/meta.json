@@ -1,0 +1,13 @@
+{
+  "title": "言据",
+  "description": "使用言据保存配置、交换数据并处理结构化数据流。",
+  "pages": [
+    "index",
+    "---格式与配置---",
+    "format",
+    "validation-paths",
+    "---交换与处理---",
+    "operations-conversion",
+    "streams-errors"
+  ]
+}

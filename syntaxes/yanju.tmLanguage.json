@@ -1,0 +1,96 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "言据",
+  "scopeName": "source.yanju",
+  "patterns": [
+    { "include": "#keys" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#containers" },
+    { "include": "#constants" },
+    { "include": "#punctuation" },
+    { "include": "#invalid" }
+  ],
+  "repository": {
+    "keys": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.yanju entity.name.tag.yanju",
+          "begin": "「(?=(?:\\\\(?:斜|左|右|换|回|表)|[^」\\\\])*」\\s*：)",
+          "end": "」",
+          "patterns": [{ "include": "#escapes" }]
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.yanju",
+          "begin": "「",
+          "end": "」",
+          "patterns": [{ "include": "#escapes" }]
+        }
+      ]
+    },
+    "escapes": {
+      "patterns": [
+        {
+          "name": "constant.character.escape.yanju",
+          "match": "\\\\(?:斜|左|右|换|回|表)"
+        },
+        {
+          "name": "invalid.illegal.escape.yanju",
+          "match": "\\\\[^斜左右换回表]"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.yanju",
+          "match": "(?<![\\p{L}\\p{N}_.])-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?![\\p{L}\\p{N}_.])"
+        }
+      ]
+    },
+    "containers": {
+      "patterns": [
+        {
+          "name": "support.type.yanju",
+          "match": "(?:据|列)(?=\\s*【)"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.yanju",
+          "match": "(?<![\\p{L}\\p{N}_])(?:真|假|空)(?![\\p{L}\\p{N}_])"
+        }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.definition.mapping.yanju",
+          "match": "："
+        },
+        {
+          "name": "punctuation.separator.sequence.yanju",
+          "match": "，"
+        },
+        {
+          "name": "punctuation.section.brackets.yanju",
+          "match": "【|】"
+        }
+      ]
+    },
+    "invalid": {
+      "patterns": [
+        {
+          "name": "invalid.illegal.punctuation.yanju",
+          "match": "[,:{}\\[\\]]"
+        }
+      ]
+    }
+  }
+}
