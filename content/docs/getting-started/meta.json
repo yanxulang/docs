@@ -1,6 +1,6 @@
 {
   "title": "开始使用",
-  "description": "完成安装，运行程序并熟悉命令行。",
+  "description": "完成安装、运行程序，并选择后续学习路线。",
   "defaultOpen": true,
-  "pages": ["index", "installation", "first-program", "cli-repl"]
+  "pages": ["index", "installation", "first-program", "cli-repl", "learning-path"]
 }

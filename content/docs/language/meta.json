@@ -4,13 +4,17 @@
   "defaultOpen": true,
   "pages": [
     "index",
+    "---语言基础---",
     "basics",
-    "collections",
     "control-flow",
     "functions",
+    "---数据与抽象---",
+    "collections",
     "objects",
+    "---程序组织与可靠性---",
     "modules",
     "errors",
+    "---参考---",
     "grammar"
   ]
 }
