@@ -10,7 +10,7 @@ description: 言序编程语言、言据、Web 基础库、工具链与生态项
   <Card title="学习路线" description="按目标选择从入门到工程实践的阅读顺序" href="/getting-started/learning-path/" />
   <Card title="语言指南" description="按主题学习语法、类型与运行语义" href="/language/" />
   <Card title="言据" description="使用中文数据格式保存配置、交换数据与处理流" href="/yanju/" />
-  <Card title="言序 Web" description="用安全 HTML、HTTP 与 Web 框架构建网络应用" href="/web/" />
+  <Card title="言枢与言标" description="用中文应用框架与安全 HTML 超集构建网络项目" href="/web/" />
   <Card title="工具链" description="配置编辑器并从源码构建言序" href="/tooling/" />
   <Card title="项目设计" description="了解运行时架构与长期演进计划" href="/project/" />
 </Cards>
@@ -23,6 +23,6 @@ description: 言序编程语言、言据、Web 基础库、工具链与生态项
 
 ## 当前版本
 
-文档对应言序核心 `1.1.4`。语言规范、1.x 源码兼容政策、不可变字节串、二进制文件/HTTP/TCP/UDP、安全随机与 HMAC、生产级 HTTPS、安全受限的套接字、格式 1 包与锁、双执行器、23 个标准模块、沙箱嵌入、语义 LSP、DAP、测试、API 文档与迁移工具均已完成验收。核心运行时本身仍不内置 HTML、HTTP 服务端或 Web 框架；这些能力由独立的 `yanxu-html 0.1`、`yanxu-http 0.1`与`yanxu-web 0.1`提供，并由`yanxu-webblog 0.1`完成集成示范。升级和扩展语言前请阅读[兼容政策](/project/compatibility/)与[长期路线图](/project/roadmap/)。
+文档对应言序核心`1.1.4`。语言规范、1.x 源码兼容政策、不可变字节串、二进制文件/HTTP/TCP/UDP、安全随机与 HMAC、生产级 HTTPS、安全受限的套接字、格式 1 包与锁、双执行器、23 个标准模块、沙箱嵌入、语义 LSP、DAP、测试、API 文档与迁移工具均已完成验收。核心运行时本身仍不内置 Web 框架；上层由`yanxu-html 0.1`、`yanxu-http 0.1`和言枢`yanxu-web 0.2`提供，言标随言枢发布，`yanxu-webblog 0.2`完成集成示范。升级和扩展语言前请阅读[兼容政策](/project/compatibility/)与[长期路线图](/project/roadmap/)。
 
 需要立即获取发行版时，可前往[下载中心](https://yanxu.dev/download/)；可运行示例位于[语言核心仓库](https://github.com/YanXuLang/yanxu/tree/main/examples)。

@@ -1,13 +1,11 @@
 ---
-title: yanxu-webblog：完整示例
-description: 运行并阅读一个包含安全 HTML、路径路由、中间件、JSON、言据和静态文件的最小博客。
+title: 言枢博客：完整示例
+description: 运行一个包含言枢配置、言标继承、命名路由、JSON、言据、静态文件和无端口测试的参考项目。
 ---
 
-[`yanxu-webblog`](https://github.com/yanxulang/yanxu-webblog)是四库集成的入门模板。它保留清晰的小文件结构，适合从数据流一路追到响应字节。
+[`yanxu-webblog`](https://github.com/yanxulang/yanxu-webblog)是言枢 0.2 与言标的参考项目。页面使用`.yb.html`模板，不再用节点工厂手写整棵 HTML 树。
 
-## 克隆与运行
-
-仓库只保存博客源码，框架、底层库与`yanju`由言包安装和锁定：
+## 运行
 
 ```sh
 git clone https://github.com/yanxulang/yanxu-webblog.git
@@ -15,7 +13,7 @@ yanbao --manifest-path yanxu-webblog install
 yanbao --manifest-path yanxu-webblog run
 ```
 
-打开[http://127.0.0.1:8787](http://127.0.0.1:8787)，或用命令检查接口：
+打开[http://127.0.0.1:8787](http://127.0.0.1:8787)，或访问：
 
 ```sh
 curl -i http://127.0.0.1:8787/
@@ -26,47 +24,39 @@ curl -i http://127.0.0.1:8787/static/app.css
 curl -i http://127.0.0.1:8787/health
 ```
 
-监听地址可通过清单允许的环境变量覆盖：
-
-```sh
-YANXU_WEBBLOG_ADDR=127.0.0.1:9000 yanxu 包 运行 yanxu-webblog
-```
-
 ## 阅读顺序
 
 ```text
-src/数据.yx  ──>  src/页面.yx  ──>  src/应用.yx  ──>  src/主.yx
-领域数据           HTML 节点          路由与响应          服务器入口
+src/数据.yx → src/页面.yx → templates/ → src/应用.yx → src/主.yx → tests/集成.yx
 ```
 
-1. `数据.yx`返回新文章容器，并按编号查询；
-2. `页面.yx`把文章转换为自动转义的 HTML 节点；
-3. `应用.yx`装配页面、JSON/言据 API、中间件、错误与静态路由；
-4. `主.yx`读取地址配置，启动持续或`--once`开发服务器；
-5. `tests/集成.yx`不打开端口，直接驱动完整应用链。
+1. 数据层返回文章；
+2. 页面数据层使用反向路由建立模板上下文；
+3. 言标页面通过`base.yb.html`继承与 partial 包含复用布局；
+4. 应用层建立配置、处理器、命名路由组、自定义 404 和静态路由；
+5. 入口选择项目路径并启动开发服务器；
+6. 测试客户端不打开端口，直接覆盖完整应用链。
 
-## 路由清单
+## 路由
 
-| 方法与路径 | 结果 | 重点 |
+| 方法与路径 | 名称 | 结果 |
 | --- | --- | --- |
-| `GET /` | HTML 首页 | 文档、布局、组件和文章列表。 |
-| `GET /posts/:id` | HTML 详情或 HTML 404 | 路径参数和自定义状态。 |
-| `GET /api/posts` | JSON | 标准序列化响应。 |
-| `GET /api/posts.yj` | 言据 | `yanju`序列化与媒体类型。 |
-| `GET /static/app.css` | CSS | 静态文件与媒体类型。 |
-| `GET /health` | 纯文字 | 健康检查。 |
+| `GET /` | `首页` | 言标首页 |
+| `GET /posts/:id` | `文章详情` | 详情或言标 404 |
+| `GET /api/posts` | `api:文章列表` | JSON |
+| `GET /api/posts.yj` | `api:文章言据` | 言据 |
+| `GET /health` | `健康` | 纯文字 |
+| `GET /static/*path` | — | CSS 等静态资产 |
 
-## 安全路径
+## 安全回归
 
-文章正文里的`<标签>`由`HTML.文字`转义；只有页脚固定的`&copy;`使用`HTML.原始`。一个响应中间件统一添加 CSP、`X-Content-Type-Options`与`Referrer-Policy`，静态服务拒绝目录穿越。
+文章正文中的`<标签>`经普通言标插值输出为`&lt;标签&gt;`。基础模板的静态 HTML 不需要可信包装，项目也没有动态可信 HTML 使用点。框架默认加入 CSP、`nosniff`与同源 referrer policy；静态和模板文件都拒绝目录穿越。
 
-这些是职责示例，不是生产认证。当前服务器仍是串行、一连接一请求模型。对外部署前先读[安全与路线图](/web/security-roadmap/)。
-
-## 测试与练习
+## 测试
 
 ```sh
 yanxu 查 yanxu-webblog/src/主.yx
-yanxu 试 yanxu-webblog/tests --json
+yanxu 试 yanxu-webblog/tests --并发 1 --json
 ```
 
-建议练习：新增第三篇文章，观察 HTML/JSON/言据同时变化；添加查询过滤；新增一个 JSON 404；再为新路由补集成规格。更完整的源码讲解在[`yanxu-webblog/docs`](https://github.com/yanxulang/yanxu-webblog/tree/main/docs)。
+可继续练习：新增模板页面、增加第三篇文章、用`JSON正文`建立 POST API、加入查询过滤，或把数据层替换为受校验的持久存储。

@@ -30,7 +30,7 @@ content/docs/
 ├── getting-started/   # 安装、第一份程序、命令行与 REPL
 ├── language/          # 语法、类型和运行语义
 ├── yanju/             # 言据格式、配置校验、转换与流
-├── web/               # HTML、HTTP、Web 框架与博客教程
+├── web/               # 言枢、言标、HTML、HTTP 与博客教程
 ├── tooling/           # 编辑器、构建与项目仓库
 └── project/           # 运行时架构与长期路线图
 ```
