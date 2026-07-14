@@ -8,6 +8,7 @@
     "basics",
     "control-flow",
     "functions",
+    "tasks",
     "---数据与抽象---",
     "collections",
     "objects",
@@ -15,6 +16,7 @@
     "modules",
     "errors",
     "---参考---",
+    "standard-library",
     "grammar"
   ]
 }

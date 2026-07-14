@@ -1,0 +1,30 @@
+---
+title: 1.0 参考项目
+description: 通过诗笺台和账册分析学习包依赖、对象、任务、错误、测试和 API 文档。
+---
+
+核心仓库`reference/`包含两个可独立锁定和执行的中等规模项目，并共享一个路径依赖包。
+
+## 诗笺台
+
+诗笺台使用显式类型、类与只读域、CSV 与 SHA-256、异步指纹任务、领域错误、路径依赖和两卷规格测试。`公`API 带声明注释，可生成模块索引。
+
+```sh
+yanxu 包 锁 reference/诗笺台
+yanxu 包 运行 reference/诗笺台
+yanxu 试 reference/诗笺台/tests
+yanxu 文 reference/诗笺台/src target/诗笺台-api.md
+```
+
+## 账册分析
+
+账册分析使用私有数列域、统计标准库、范围限定共享包、可捕获空账册错误和异步汇总任务。
+
+```sh
+yanxu 包 锁 reference/账册分析
+yanxu 包 运行 reference/账册分析
+yanxu 试 reference/账册分析/tests
+yanxu 文 reference/账册分析/src target/账册分析-api.md
+```
+
+两个项目的`言序.lock`均为格式 1，并在 1.0 验收中同时经过静态检查、包运行、规格测试和文档生成。

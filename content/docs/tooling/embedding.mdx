@@ -1,0 +1,61 @@
+---
+title: 嵌入与宿主权限
+description: 通过 Rust、C 或 WASI 嵌入言序，并以最小权限运行不可信源码。
+---
+
+## Rust API
+
+`yanxu::embed::Engine`是持久执行入口。它保留全局绑定，返回值、值类型、输出和后端均为结构化字段；前端、类型、编译、运行和 I/O 错误有独立类别。
+
+```rust
+use yanxu::embed::{Backend, Engine, EngineConfig};
+
+let mut engine = Engine::new(EngineConfig::sandboxed(Backend::Bytecode));
+let result = engine.run("令 答案：数 为 42；言 答案；")?;
+assert_eq!(result.output, ["42"]);
+# Ok::<(), yanxu::embed::EngineError>(())
+```
+
+默认配置使用字节码 VM、静态检查和无宿主能力沙箱。可信宿主可用`PermissionSet`逐项开放文件根目录、网络主机或环境变量；`allow_process`开放子进程能力。`EngineConfig::unrestricted`必须由宿主显式选择。
+
+每次执行还受`ExecutionBudget`约束，默认限制一百万执行步、256 层法调用和单集合十万项。宿主可以设置`config.budget`；越界错误会明确指出`max_steps`、`max_call_depth`或`max_collection_elements`，便于判断是提高预算还是修复无穷循环、无界递归或数据增长。
+
+```rust
+use yanxu::permissions::PermissionSet;
+
+let mut config = EngineConfig::sandboxed(Backend::Bytecode);
+config.permissions = PermissionSet::sandboxed()
+    .allow_file("./data")
+    .allow_network("api.example.com")
+    .allow_environment("YANXU_PROFILE");
+config.budget = yanxu::budget::ExecutionBudget::new(200_000, 128, 20_000);
+```
+
+## 包权限与 CLI 策略
+
+包清单使用相对包根目录的文件范围：
+
+```toml
+[权限]
+文件 = ["data", "src"]
+网络 = ["api.example.com"]
+环境 = ["YANXU_PROFILE"]
+进程 = false
+```
+
+`yanxu 包 运行 [路径]`按清单权限执行入口。为兼容 0.7 及更早脚本，直接执行`yanxu 文卷.yx`仍是显式不受限模式；运行来源不可信的程序时应使用包运行或嵌入沙箱。模块文件、文件标准库、网络和环境变量在树解释器与 VM 中执行相同权限判定。
+
+## C ABI
+
+最小 C ABI 提供`yanxu_engine_new`、`yanxu_engine_new_unrestricted`、`yanxu_engine_run`、`yanxu_engine_free`和`yanxu_string_free`。执行结果是 schema 1 的 UTF-8 JSON；调用方负责释放返回字符串。默认构造函数始终使用沙箱。
+
+## WASI
+
+`yanxu::wasm::run_utf8`提供无文件、网络、环境或进程权限的字节码入口。可用下列命令检查 WASI 构建：
+
+```sh
+rustup target add wasm32-wasip1
+cargo check --target wasm32-wasip1 --lib
+```
+
+纯计算和标准纯函数可以直接运行；不可用的宿主能力会返回“未获…权限”错误，不会静默跳过。

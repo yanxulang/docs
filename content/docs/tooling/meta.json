@@ -4,7 +4,10 @@
   "pages": [
     "index",
     "---日常开发---",
+    "cli-tools",
     "vscode",
+    "embedding",
+    "compatibility",
     "---参与项目---",
     "source-build"
   ]
