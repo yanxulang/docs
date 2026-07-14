@@ -15,6 +15,7 @@
     "---程序组织与可靠性---",
     "modules",
     "errors",
+    "sockets",
     "---参考---",
     "standard-library",
     "grammar"
