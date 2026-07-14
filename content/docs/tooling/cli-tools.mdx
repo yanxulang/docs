@@ -1,6 +1,6 @@
 ---
-title: 1.0 命令工具
-description: 使用静态检查、格式化、测试、字节码、调试、文档与 LSP。
+title: 1.1.5 命令工具
+description: 使用静态检查、格式化、测试、YXB、字节码、调试、文档与 LSP。
 ---
 
 ## 检查与格式化
@@ -47,6 +47,17 @@ yanxu 语言服务
 ```
 
 服务使用 LSP stdio framing 和 UTF-16 坐标，实现文档同步、前端/类型诊断、全文格式化、语义补全、定义跳转、引用、重命名、类型/注释悬停与层级文档符号。
+
+## 编译和运行应用
+
+```sh
+yanxu compile . -o build/应用.yxb --release
+yanxu run build/应用.yxb -- --once
+yanxu compile . -o build/应用 --release --standalone
+yanxu version --json
+```
+
+YXB 包含可达的项目模块、锁定依赖、资源、权限和调试信息，不依赖原始源码；`--standalone`再封装当前平台的言序 VM。完整发布流程见[应用构建](/tooling/building-apps/)。`version --json`报告清单、锁、YXB、工程协议、原生 ABI 和目标平台能力，工程工具应先协商能力再调用核心。
 
 ## 按权限运行包
 

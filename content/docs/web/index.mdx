@@ -58,8 +58,8 @@ yanxu-webblog    言枢配置 · 言标页面 · JSON/言据 · 静态文件
 ```sh
 git clone https://github.com/yanxulang/yanxu-web.git
 git clone https://github.com/yanxulang/yanxu-webblog.git
-yanbao --manifest-path yanxu-web install
-yanbao --manifest-path yanxu-webblog install
+yanbao install --manifest-path yanxu-web
+yanbao install --manifest-path yanxu-webblog
 ```
 
 核心运行时本身仍不内置 Web 框架；这些能力以独立包演进。言包锁文件固定精确 Git 修订和内容校验，依赖包的宿主权限不会自动传递给应用。

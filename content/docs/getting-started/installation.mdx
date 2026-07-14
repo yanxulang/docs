@@ -23,4 +23,6 @@ irm https://raw.githubusercontent.com/YanXuLang/yanxu/main/scripts/install.ps1 |
 yanxu --version
 ```
 
+项目初始化、依赖管理和打包由独立的[言包](/tooling/package-manager/)完成。言包 0.2.0 的命令实现完全由言序编写，因此安装顺序始终是：先安装言序 1.1.5 或更高版本，再获取言包仓库中的启动器与`src/`源码；不需要 Rust，也不需要单独编译言包。
+
 如果你希望参与语言实现，或安装器不适用于当前环境，请改用[从源码构建](/tooling/source-build/)。
