@@ -54,6 +54,8 @@ yanbao run
 
 `install`优先验证现有锁定和缓存；`update`显式移除旧锁定后重新选择版本；`--offline`禁止网络获取。缓存位置沿用核心运行时，可通过`YANXU_CACHE`覆盖。
 
+路径依赖锁按相对路径、文件长度与内容计算 SHA-256；`.git`、`.yanxu`、`target`、`.DS_Store`和`言序.lock`不参与校验，因而在仓库内安装言序或跨 macOS/Linux/Windows 复现时不会产生无关漂移。其余文件变化会使旧锁失效，应显式运行`yanbao update`或`yanxu 包 更新`。
+
 ## 自动化输出
 
 所有命令接受全局`--json`，输出带`schema_version: 1`的机器可读结果：
