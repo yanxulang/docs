@@ -21,3 +21,51 @@ jobs:
       - run: npm run types:check
       - run: npm run lint
       - run: npm run build
+
+  gui-examples:
+    name: 图形界面示例
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: 安装原生窗口运行依赖
+        run: |
+          sudo apt-get -o Acquire::Retries=5 update
+          sudo apt-get -o Acquire::Retries=5 install -y \
+            libfontconfig1 libwayland-client0 libxkbcommon0 libxkbcommon-x11-0 \
+            libx11-6 xvfb
+      - name: 检出言序 1.1.8
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          repository: YanXuLang/yanxu
+          ref: v1.1.8
+          path: target/yanxu-core
+      - name: 构建言序并锁定言界
+        run: |
+          cargo build --manifest-path target/yanxu-core/Cargo.toml --locked --bin yanxu
+          target/yanxu-core/target/debug/yanxu 包 更新 examples/gui
+      - name: 核对文档源码、格式与静态类型
+        shell: bash
+        run: |
+          set -euo pipefail
+          core="$GITHUB_WORKSPACE/target/yanxu-core/target/debug/yanxu"
+          awk '/^```yanxu$/{inside=1; next} inside && /^```$/{exit} inside {print}' \
+            content/docs/gui/complete-example.mdx > "$RUNNER_TEMP/完整示例.yx"
+          cmp examples/gui/综合控件展示.yx "$RUNNER_TEMP/完整示例.yx"
+          for file in examples/gui/*.yx; do
+            "$core" 格 "$file" > "$RUNNER_TEMP/格式化.yx"
+            cmp "$file" "$RUNNER_TEMP/格式化.yx"
+            "$core" 查 "$file"
+          done
+      - name: 构建全部文档示例
+        shell: bash
+        run: |
+          set -euo pipefail
+          core="$GITHUB_WORKSPACE/target/yanxu-core/target/debug/yanxu"
+          mkdir -p "$RUNNER_TEMP/gui-build"
+          for file in examples/gui/*.yx; do
+            name="$(basename "$file" .yx)"
+            "$core" 编 "$file" --release -o "$RUNNER_TEMP/gui-build/$name.yxb"
+          done
+          test "$(find "$RUNNER_TEMP/gui-build" -type f -name '*.yxb' | wc -l)" -eq 3
+      - name: 运行自动关闭真实窗口
+        run: xvfb-run -a target/yanxu-core/target/debug/yanxu 字节 examples/gui/自动关闭冒烟.yx
