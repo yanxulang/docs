@@ -5,10 +5,14 @@ description: 解析有预算边界的 HTTP/1.1 请求，并构造状态、首部
 
 [`yanxu-http`](https://github.com/yanxulang/yanxu-http)负责服务端协议对象与 TCP 单请求连接。它不提供路由或 HTML 清洗，因而可以独立用于协议测试、教学或其他框架。
 
+```sh
+yanbao add http --version '^0.1'
+```
+
 ## 解析请求
 
 ```yanxu
-引「包:yanxu-http」为 HTTP；
+引「包:http」为 HTTP；
 引「标准:字节」为 字节；
 
 定 请求 为 HTTP.解析请求（

@@ -5,13 +5,28 @@ description: 言序编程语言、言据、Web 基础库、工具链与生态项
 
 言序是一门由 Rust 实现的现代中文编程语言。你可以使用中文关键字、中文标识符和全角标点，同时获得类型、容器、模块与结构化错误等工程能力。
 
+## 使用言包管理项目
+
+言包（`yanbao`）是言序项目的默认入口。创建项目、添加依赖和运行检查均通过一套稳定命令完成：
+
+```sh
+yanbao init 我的项目 --name 示例
+cd 我的项目
+yanbao add http
+yanbao check
+yanbao test
+```
+
+官方 GitHub 包可省略`yanxulang/`组织名和`yanxu-`前缀：`yanbao add http`等价于添加`yanxulang/yanxu-http`。完整安装与来源规则见[言包工程工具](/tooling/package-manager/)。
+
 <Cards>
   <Card title="开始使用" description="安装言序并运行第一份中文程序" href="/getting-started/" />
+  <Card title="言包：项目与依赖" description="创建项目，以短包名添加 GitHub 依赖并构建应用" href="/tooling/package-manager/" />
   <Card title="学习路线" description="按目标选择从入门到工程实践的阅读顺序" href="/getting-started/learning-path/" />
   <Card title="语言指南" description="按主题学习语法、类型与运行语义" href="/language/" />
   <Card title="言据" description="使用中文数据格式保存配置、交换数据与处理流" href="/yanju/" />
   <Card title="言枢与言标" description="用中文应用框架与安全 HTML 超集构建网络项目" href="/web/" />
-  <Card title="工具链" description="配置编辑器并从源码构建言序" href="/tooling/" />
+  <Card title="工具链" description="使用命令行、编辑器、构建与调试工具" href="/tooling/" />
   <Card title="项目设计" description="了解运行时架构与长期演进计划" href="/project/" />
 </Cards>
 
@@ -23,6 +38,6 @@ description: 言序编程语言、言据、Web 基础库、工具链与生态项
 
 ## 当前版本
 
-文档对应言序核心`1.1.6`。本版是 1.1.5 工程化能力的稳定性收口：YXB 权限不能超过宿主上限，外部归档具有完整的压缩体积、模块、指令、调试信息和资源预算，原生 ABI 加固了动态库载入与异常资源释放，版本信息可精确追溯到构建提交、目标和模式。格式 2 清单/完整锁图、源码无关 YXB、独立应用、原生 ABI v1 和 25 个标准模块继续保持兼容。言包 0.2.1 仍完全由言序编写，并以包含专用 1.1.6 运行时的独立 Release 分发，普通用户不需要先安装言序。核心运行时不内置 Web 框架；现有 Web 类库保持原发布基线。升级前请阅读[1.1.6 迁移指南](/tooling/migration-1.1.6/)、[兼容政策](/project/compatibility/)与[长期路线图](/project/roadmap/)。
+文档对应言序核心`1.1.6`与言包`0.4.0`。格式 2 清单与完整锁图、源码无关 YXB、独立应用、原生 ABI v1 和 25 个标准模块保持兼容。言包完全由言序编写，复用系统中已安装的言序 1.1.6 或更高版本，并以 GitHub 作为默认包来源。核心运行时不内置 Web 框架；Web 能力由独立包提供。升级前请阅读[1.1.6 迁移指南](/tooling/migration-1.1.6/)、[兼容政策](/project/compatibility/)与[长期路线图](/project/roadmap/)。
 
 需要立即获取发行版时，可前往[下载中心](https://yanxu.dev/download/)；可运行示例位于[语言核心仓库](https://github.com/YanXuLang/yanxu/tree/main/examples)。

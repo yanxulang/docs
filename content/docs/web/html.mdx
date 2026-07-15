@@ -5,10 +5,14 @@ description: 用节点、元素、属性、组件和文档生成默认转义的 
 
 [`yanxu-html`](https://github.com/yanxulang/yanxu-html)是 Web 栈最底层的输出库，不依赖 HTTP 或框架。它的核心设计是把普通文字和原始 HTML 分成两种节点：普通内容总是转义，绕过转义必须显式调用`原始`。
 
+```sh
+yanbao add html --version '^0.1'
+```
+
 ## 第一个页面
 
 ```yanxu
-引「包:yanxu-html」为 HTML；
+引「包:html」为 HTML；
 
 定 页面 为 HTML.文档（HTML.元素（「html」，【HTML.属性（「lang」，「zh-CN」）】，【
     HTML.元素（「body」，【】，【

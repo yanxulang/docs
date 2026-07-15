@@ -1,13 +1,24 @@
 ---
 title: 言包工程工具
-description: 安装独立发布、完全由言序编写的 yanbao。
+description: 使用言包创建项目，并通过短包名管理 GitHub 依赖。
 ---
 
-言包（`yanbao`）是言序的官方工程与包管理工具。0.2.0 起，命令层完全由言序源码编写；仓库没有 Cargo 工程或 Rust 业务代码。0.2.1 起，言包通过独立 GitHub Release 发布，正式分发包内置专用言序 1.1.6 运行时。它负责项目初始化、依赖增删、安装更新、测试、构建、缓存、诊断、打包和注册表交互，但不复制第二套 TOML、SemVer、依赖解析、锁图或 YXB 实现。
+言包（`yanbao`）是言序的官方工程与包管理工具。它负责项目初始化、依赖增删、安装更新、测试、构建、缓存、诊断和打包；清单、版本选择、锁图和 YXB 语义仍由言序核心统一实现。
 
-## 独立安装
+## 最常用的包命令
 
-普通用户直接使用言包 Release 的跨平台安装脚本；安装包同时校验言包、启动器和专用运行时版本，不要求系统已有`yanxu`：
+```sh
+yanbao add html
+yanbao add http
+yanbao add web
+yanbao install
+```
+
+短包名默认映射到 GitHub：`http`与`yanxu-http`均表示`yanxulang/yanxu-http`。第三方仓库使用`yanbao add <组织>/<仓库>`；只有自定义 Git URL、路径或注册表才需要显式使用`--git`、`--path`或`--registry`。
+
+## 安装
+
+请先安装言序 1.1.6 或更高版本，并确保`yanxu`位于`PATH`中。再运行言包安装器：
 
 ```sh
 curl -fsSL https://get.yanxu.dev/yanbao | sh
@@ -21,7 +32,7 @@ Windows 使用 PowerShell 安装器：
 irm https://get.yanxu.dev/yanbao/windows | iex
 ```
 
-正式分发的启动器只定位同一安装目录中的`src/主.yx`和专用`yanxu-1.1.6`，所有业务逻辑仍由言序执行。只有从源码仓库开发言包时才需要言序 1.1.6 或更高版本；此时可用`YANXU_BIN=/绝对路径/yanxu`指定开发核心。任何场景都不需要 Rust 版言包，因为它不存在。
+安装器校验下载制品和版本，然后使用系统言序执行言包。可用`YANXU_BIN=/绝对路径/yanxu`指定运行时；言包不会复制或覆盖言序。
 
 ## 创建项目
 
@@ -36,7 +47,8 @@ yanbao doctor --manifest-path 我的项目
 
 ```sh
 yanbao add 工具 --package 共享工具 --path ../共享工具 --version '^1'
-yanbao add HTTP --package yanxu-http --git https://github.com/YanXuLang/yanxu-http.git --rev main
+yanbao add http --version '^0.1'
+yanbao add acme/yanxu-tools
 yanbao add 测试工具 --dev --path ../测试工具
 yanbao remove 工具
 yanbao install --offline
@@ -46,7 +58,7 @@ yanbao install --offline
 
 ```sh
 yanbao tree
-yanbao why HTTP
+yanbao why http
 yanbao outdated
 yanbao update --dry-run
 yanbao doctor

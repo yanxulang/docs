@@ -4,8 +4,8 @@
   "pages": [
     "index",
     "---日常开发---",
-    "cli-tools",
     "package-manager",
+    "cli-tools",
     "building-apps",
     "native-extensions",
     "vscode",
