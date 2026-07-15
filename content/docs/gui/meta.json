@@ -27,6 +27,15 @@
     "clipboard",
     "dialogs",
     "multi-window",
-    "hidpi"
+    "hidpi",
+    "---平台、配置与发布---",
+    "windows-support",
+    "macos-support",
+    "linux-support",
+    "yanju-config",
+    "json-compat",
+    "packaging",
+    "migration",
+    "troubleshooting"
   ]
 }
