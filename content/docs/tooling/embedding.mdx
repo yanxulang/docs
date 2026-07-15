@@ -20,6 +20,8 @@ assert_eq!(result.output, ["42"]);
 
 默认配置使用字节码 VM、静态检查和无宿主能力沙箱。可信宿主可用`PermissionSet`逐项开放文件根目录、网络外连主机、TCP 监听地址、UDP 绑定地址或环境变量；`allow_process`开放子进程能力。`EngineConfig::unrestricted`必须由宿主显式选择。
 
+运行 YXB 时，归档权限是应用的申请，不是授权。1.1.6 使用`PermissionSet::intersect`把申请与宿主配置合并；应用无法超过宿主上限，执行结束后也会恢复原宿主权限。沙箱宿主即使载入声明了全权限且重新计算过校验和的 YXB，仍保持沙箱。
+
 每次执行还受`ExecutionBudget`约束，默认限制一百万执行步、256 层法调用和单集合十万项。宿主可以设置`config.budget`；越界错误会明确指出`max_steps`、`max_call_depth`或`max_collection_elements`，便于判断是提高预算还是修复无穷循环、无界递归或数据增长。
 
 ```rust

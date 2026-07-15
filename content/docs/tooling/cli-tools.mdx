@@ -1,5 +1,5 @@
 ---
-title: 1.1.5 命令工具
+title: 1.1.6 命令工具
 description: 使用静态检查、格式化、测试、YXB、字节码、调试、文档与 LSP。
 ---
 
@@ -57,7 +57,7 @@ yanxu compile . -o build/应用 --release --standalone
 yanxu version --json
 ```
 
-YXB 包含可达的项目模块、锁定依赖、资源、权限和调试信息，不依赖原始源码；`--standalone`再封装当前平台的言序 VM。完整发布流程见[应用构建](/tooling/building-apps/)。`version --json`报告清单、锁、YXB、工程协议、原生 ABI 和目标平台能力，工程工具应先协商能力再调用核心。
+YXB 包含可达的项目模块、锁定依赖、资源、权限和调试信息，不依赖原始源码；`--standalone`再封装当前平台的言序 VM。完整发布流程见[应用构建](/tooling/building-apps/)。`version --json`除格式能力外还报告构建提交 SHA、目标平台和构建模式；工程工具应先协商能力，并把该身份写入验收记录。
 
 ## 按权限运行包
 

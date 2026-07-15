@@ -1,22 +1,21 @@
 ---
 title: 言包工程工具
-description: 先安装言序，再直接运行完全由言序编写的 yanbao。
+description: 安装独立发布、完全由言序编写的 yanbao。
 ---
 
-言包（`yanbao`）是言序的官方工程与包管理工具。0.2.0 起，命令层完全由言序源码编写；仓库没有 Cargo 工程或 Rust 业务代码。它负责项目初始化、依赖增删、安装更新、测试、构建、缓存、诊断、打包和注册表交互，但不复制第二套 TOML、SemVer、依赖解析、锁图或 YXB 实现。
+言包（`yanbao`）是言序的官方工程与包管理工具。0.2.0 起，命令层完全由言序源码编写；仓库没有 Cargo 工程或 Rust 业务代码。0.2.1 起，言包通过独立 GitHub Release 发布，正式分发包内置专用言序 1.1.6 运行时。它负责项目初始化、依赖增删、安装更新、测试、构建、缓存、诊断、打包和注册表交互，但不复制第二套 TOML、SemVer、依赖解析、锁图或 YXB 实现。
 
-## 安装顺序
+## 独立安装
 
-必须先安装言序 1.1.5 或更高版本：
+普通用户直接使用言包 Release 的跨平台安装脚本；安装包同时校验言包、启动器和专用运行时版本，不要求系统已有`yanxu`：
 
 ```sh
-yanxu version --json
-git clone https://github.com/YanXuLang/yanbao.git
-./yanbao --help
-./yanbao doctor
+curl -fsSL https://raw.githubusercontent.com/YanXuLang/yanbao/main/scripts/install.sh | sh
+yanbao --version
+yanbao doctor
 ```
 
-Unix 使用仓库中的`yanbao`，Windows 使用`yanbao.cmd`或`yanbao.ps1`。启动器只定位同一分发目录中的`src/主.yx`和`yanxu`，所有业务逻辑都由言序执行。自定义核心路径可设置`YANXU_BIN=/绝对路径/yanxu`。不需要 Rust，也不需要编译言包。
+Windows 使用仓库中的 PowerShell 安装器。正式分发的启动器只定位同一安装目录中的`src/主.yx`和专用`yanxu-1.1.6`，所有业务逻辑仍由言序执行。只有从源码仓库开发言包时才需要言序 1.1.6 或更高版本；此时可用`YANXU_BIN=/绝对路径/yanxu`指定开发核心。任何场景都不需要 Rust 版言包，因为它不存在。
 
 ## 创建项目
 
@@ -69,6 +68,6 @@ yanbao audit
 
 言包通过`yanxu package protocol`的版本化 JSON 协议调用核心`yanxu-package`。启动时会协商清单 2、锁 2、YXB 1、工程协议 1 和原生 ABI 1；核心不兼容时会明确要求先升级言序。
 
-路径、Git 和索引包只有通过锁定与内容校验后才可参与模块加载。依赖清单的文件、网络、监听、UDP、进程或原生扩展权限不会传给应用；第三方包也不能自动执行构建脚本。公开注册表在完成安全评审前仍不作为 1.1.5 发布目标。
+路径、Git 和索引包只有通过锁定与内容校验后才可参与模块加载。依赖清单的文件、网络、监听、UDP、进程或原生扩展权限不会传给应用；第三方包也不能自动执行构建脚本。公开注册表在完成安全评审前仍不作为 1.1.6 发布目标。言包 Release、标签和 CI 与核心运行时分别管理，不能以核心 Release 替代言包自身验收。
 
 源码、问题与贡献说明见[YanXuLang/yanbao](https://github.com/YanXuLang/yanbao)。
