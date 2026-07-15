@@ -6,11 +6,13 @@
     "---日常开发---",
     "package-manager",
     "cli-tools",
+    "gui-applications",
     "building-apps",
     "native-extensions",
     "vscode",
     "embedding",
     "compatibility",
+    "migration-1.1.7",
     "migration-1.1.6",
     "---参与项目---",
     "source-build"
