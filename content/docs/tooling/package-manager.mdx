@@ -3,7 +3,7 @@ title: 言包工程工具
 description: 使用言包创建项目，并通过短包名管理 GitHub 依赖。
 ---
 
-言包（`yanbao`）是言序的官方工程与包管理工具。它负责项目初始化、依赖增删、安装更新、测试、构建、缓存、诊断和打包；清单、版本选择、锁图和 YXB 语义仍由言序核心统一实现。
+言包（`yanbao`）是言序的官方工程与包管理工具，命令层完全由言序源码编写；仓库没有 Cargo 工程或 Rust 业务代码。0.5.0 面向言序 1.1.7，负责普通/GUI 项目初始化、依赖、测试、YXB、Standalone、Bundle、缓存、诊断和打包，但不复制第二套 TOML、SemVer、依赖解析、锁图、YXB 或 Bundle 实现。
 
 ## 最常用的包命令
 
@@ -18,7 +18,7 @@ yanbao install
 
 ## 安装
 
-请先安装言序 1.1.6 或更高版本，并确保`yanxu`位于`PATH`中。再运行言包安装器：
+请先安装言序 1.1.7 或更高版本，并确保`yanxu`位于`PATH`中。再运行言包安装器：
 
 ```sh
 curl -fsSL https://get.yanxu.dev/yanbao | sh
@@ -32,12 +32,13 @@ Windows 使用 PowerShell 安装器：
 irm https://get.yanxu.dev/yanbao/windows | iex
 ```
 
-安装器校验下载制品和版本，然后使用系统言序执行言包。可用`YANXU_BIN=/绝对路径/yanxu`指定运行时；言包不会复制或覆盖言序。
+安装器校验下载制品和版本，然后使用系统言序执行言包。可用`YANXU_BIN=/绝对路径/yanxu`指定运行时；言包不会复制或覆盖言序，也不需要 Rust 版言包。
 
 ## 创建项目
 
 ```sh
 yanbao init 我的项目 --name 示例
+yanbao new 我的窗口 --gui
 yanbao doctor --manifest-path 我的项目
 ```
 
@@ -74,18 +75,19 @@ yanbao test
 yanbao run -- --once
 yanbao build --release
 yanbao build --release --standalone
+yanbao build --release --bundle
 yanbao doc
 yanbao pack
 yanbao vendor
 yanbao audit
 ```
 
-`build`调用核心生成 YXB 或当前平台自包含程序；`pack`生成确定性`.yxp`；`vendor`复制完整锁定图以便离线恢复；`audit`复核校验和、来源、许可证、重复版本与原生制品。工作区会对声明成员执行同一套命令。
+`build`调用核心生成 YXB、当前平台 standalone 或 GUI Bundle；GUI 模板自动写入应用配置、独立权限和`yanxu-gui`依赖。`pack`生成确定性`.yxp`；`vendor`复制完整锁定图以便离线恢复；`audit`复核校验和、来源、许可证、重复版本与原生制品。工作区会对声明成员执行同一套命令。
 
 ## 职责与安全边界
 
-言包通过`yanxu package protocol`的版本化 JSON 协议调用核心`yanxu-package`。启动时会协商清单 2、锁 2、YXB 1、工程协议 1 和原生 ABI 1；核心不兼容时会明确要求先升级言序。
+言包通过`yanxu package protocol`的版本化 JSON 协议调用核心`yanxu-package`。启动时会协商清单 2、锁 2、YXB 1、工程协议 1、原生 ABI v1/v2 和 Bundle 操作；核心不兼容时会明确要求先升级言序。
 
-路径、Git 和索引包只有通过锁定与内容校验后才可参与模块加载。依赖清单的文件、网络、监听、UDP、进程或原生扩展权限不会传给应用；第三方包也不能自动执行构建脚本。公开注册表在完成安全评审前仍不作为 1.1.6 发布目标。言包 Release、标签和 CI 与核心运行时分别管理，不能以核心 Release 替代言包自身验收。
+路径、Git 和索引包只有通过锁定与内容校验后才可参与模块加载。依赖权限不会传给应用，GUI 也不会自动授予文件或网络；第三方包不能自动执行构建脚本。原生后端必须来自锁定目标且通过摘要门禁，运行时不下载。言包 Release、标签和 CI 与核心运行时分别管理，不能以核心 Release 替代言包自身验收。
 
 源码、问题与贡献说明见[YanXuLang/yanbao](https://github.com/YanXuLang/yanbao)。

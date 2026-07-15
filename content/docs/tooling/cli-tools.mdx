@@ -1,5 +1,5 @@
 ---
-title: 1.1.6 命令工具
+title: 1.1.7 命令工具
 description: 使用静态检查、格式化、测试、YXB、字节码、调试、文档与 LSP。
 ---
 
@@ -34,6 +34,7 @@ yanxu 字节 examples/VM入门.yx
 yanxu 字节 --反汇编 examples/VM入门.yx
 yanxu 调 examples/初见.yx
 yanxu 文 src/数学.yx api/数学.md
+yanxu 文 --json src/数学.yx api/数学.json
 yanxu 文 src api/全库.md
 yanxu 基准 10
 ```
@@ -54,10 +55,11 @@ yanxu 语言服务
 yanxu compile . -o build/应用.yxb --release
 yanxu run build/应用.yxb -- --once
 yanxu compile . -o build/应用 --release --standalone
+yanxu compile . -o build/应用.app --release --bundle
 yanxu version --json
 ```
 
-YXB 包含可达的项目模块、锁定依赖、资源、权限和调试信息，不依赖原始源码；`--standalone`再封装当前平台的言序 VM。完整发布流程见[应用构建](/tooling/building-apps/)。`version --json`除格式能力外还报告构建提交 SHA、目标平台和构建模式；工程工具应先协商能力，并把该身份写入验收记录。
+YXB 包含可达的项目模块、锁定依赖、资源、权限、应用元数据和当前目标原生制品，不依赖原始源码；`--standalone`封装单文件 VM，`--bundle`生成当前平台桌面应用目录。完整发布流程见[应用构建](/tooling/building-apps/)。`version --json`除格式能力外还报告构建提交 SHA、目标平台、构建模式、ABI v1/v2 与独立 GUI 权限；工程工具应先协商能力，并把该身份写入验收记录。
 
 ## 按权限运行包
 
