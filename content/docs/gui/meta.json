@@ -36,6 +36,13 @@
     "json-compat",
     "packaging",
     "migration",
-    "troubleshooting"
+    "troubleshooting",
+    "---参考与贡献---",
+    "capability-matrix",
+    "api-reference",
+    "complete-example",
+    "backend-guide",
+    "protocols",
+    "compatibility"
   ]
 }
