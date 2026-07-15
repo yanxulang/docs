@@ -1,0 +1,123 @@
+---
+title: 言舟：SQLite
+description: 在言库协议之上连接 SQLite，安全绑定参数，执行事务批、保存点与迁移。
+---
+
+言库·轻舟（`yanxu-sqlite`，包名 `言舟`）是言库的 SQLite 实现。默认后端调用 SQLite 官方 `sqlite3` CLI；言序负责安全绑定、结果归一、事务脚本和迁移，宿主进程负责真正打开数据库。
+
+## 安装与运行条件
+
+```sh
+yanbao add sqlite --package 言舟 --version "^0.1"
+```
+
+默认后端要求 SQLite 3.38 或更高版本，并确保 `sqlite3` 位于 `PATH`。顶层应用需要允许进程调用，并为数据库路径授予文件访问：
+
+```toml
+[权限]
+文件 = ["data"]
+进程 = true
+```
+
+言包会自动安装言库。
+
+## 打开与查询
+
+```yanxu
+引「包:言舟」为 言舟；
+
+定 数据库 为 言舟.打开（「data/应用.db」）；
+
+数据库.执行（
+    「CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, name TEXT NOT NULL)」，
+    【】
+）；
+
+数据库.预编译（「INSERT INTO users(name) VALUES (?)」）
+    .执行（【「子衿」】）；
+
+定 用户列 为 数据库
+    .查询（「SELECT id, name FROM users WHERE name = ?」，【「子衿」】）
+    .全部（）；
+
+数据库.关闭（）；
+```
+
+`打开为(路径, 程序, 超时毫秒)` 可指定 CLI 路径和超时。`以执行器(法)` 可完全绕过外部进程，用于测试或接入原生 SQLite 驱动。
+
+## 参数绑定
+
+`绑定(SQL, 参数)` 只替换普通 SQL 上下文中的 `?`，会跳过单引号文字、双引号标识和反引号标识，并严格检查参数数量。
+
+```yanxu
+定 已绑定 为 言舟.绑定（
+    「SELECT '?' AS literal, name FROM users WHERE id = ?」，
+    【42】
+）；
+```
+
+文字使用 SQLite 单引号双写规则，列和典编码为 JSON 文字。应用仍应把动态标识名限制在白名单内；占位符只能代表值，不能代表表名或列名。
+
+`SQLite预编译` 保存 SQL 模板，提供 `执行`、`查询` 和用于审计的 `已绑定`。它是可复用语句外观，不声称 CLI 后端持有跨进程原生 statement 句柄。
+
+## 批量执行
+
+```yanxu
+定 数量 为 数据库.批量执行（【
+    {「SQL」：「INSERT INTO users(name) VALUES (?)」，「参数」：【「甲」】}，
+    {「SQL」：「INSERT INTO users(name) VALUES (?)」，「参数」：【「乙」】}，
+    「DELETE FROM users WHERE name = '过期'」
+】）；
+```
+
+批量项可以是 SQL 文字或 `{SQL, 参数}`，所有项放在一个立即事务中提交，返回执行项数。
+
+## 事务批与保存点
+
+```yanxu
+定 事务 为 数据库.立即事务（）；
+事务.执行（「INSERT INTO users(name) VALUES (?)」，【「采薇」】）
+    .保存点（「第二步」）
+    .执行（「INSERT INTO users(name) VALUES (?)」，【「蒹葭」】）
+    .释放点（「第二步」）
+    .提交（）；
+```
+
+标准进程模块没有持久标准输入，因此 CLI 后端先安全绑定并缓存写语句，提交时一次交给同一个 SQLite 进程。这样可以保证原子性与保存点语义。
+
+事务批在提交前不返回查询结果；调用 `查询` 会明确报错。提交后通过连接查询。如果需要事务中读取并据此继续写入，应注入支持持久会话的原生执行器。
+
+保存点必须后进先出释放，提交前不能遗留开放保存点。`回滚()` 丢弃尚未提交的脚本。
+
+## 数据库迁移
+
+```yanxu
+定 各迁移 为 【
+    言舟.迁移（
+        1，
+        「创建用户表」，
+        「CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT NOT NULL)」，
+        「DROP TABLE users」
+    ），
+    言舟.迁移（
+        2，
+        「增加邮箱」，
+        「ALTER TABLE users ADD COLUMN email TEXT」，
+        「」
+    ）
+】；
+
+定 迁移器 为 言舟.默认迁移器（数据库）；
+言 迁移器.待升级（各迁移）；
+迁移器.升级（各迁移）；
+```
+
+迁移版本必须严格递增。默认迁移表是 `_yanxu_migrations`，记录版本、名称和应用时间。`回退(迁移列, 次数)` 只回退有本地定义且提供降级 SQL 的迁移。
+
+## 结果与错误
+
+执行和查询返回言库 `查询结果`。`安全执行` 返回结构化成功/错误典；SQLite 错误使用 `YANZHOU_` 前缀，并保留 SQL、参数、程序和踪迹。
+
+默认 CLI 方案适合本地工具、测试和中低并发单机应用。需要长连接、高并发或细粒度取消时，应实现持久原生执行器，同时继续复用言库和言舟的公开边界。
+
+仓库：[yanxulang/yanxu-sqlite](https://github.com/yanxulang/yanxu-sqlite)。
