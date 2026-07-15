@@ -10,6 +10,13 @@
     "configuration",
     "---架构---",
     "platform-architecture",
-    "ui-architecture"
+    "ui-architecture",
+    "---应用与控件---",
+    "app-loop",
+    "windows",
+    "layout",
+    "controls",
+    "themes",
+    "events"
   ]
 }
