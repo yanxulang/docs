@@ -1,0 +1,15 @@
+{
+  "title": "图形界面",
+  "description": "用言窗或言界构建原生跨平台桌面应用。",
+  "pages": [
+    "index",
+    "routes",
+    "choosing",
+    "quick-start",
+    "first-window",
+    "configuration",
+    "---架构---",
+    "platform-architecture",
+    "ui-architecture"
+  ]
+}
