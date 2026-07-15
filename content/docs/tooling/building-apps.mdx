@@ -42,7 +42,7 @@ yanbao build --release --bundle
 # 或 yanxu compile . --release --bundle
 ```
 
-Bundle 包含 standalone、可检查 YXB、锁定 GUI 后端、资源、图标、应用元数据、许可证和逐文件摘要。macOS 生成标准`.app`，Windows 生成嵌入图标/版本/PerMonitorV2 manifest 的 GUI 子系统 PE 目录，Linux 生成 AppDir、Desktop Entry 和 hicolor 图标。构建器验证 PE/ELF/Mach-O 目标架构，在同级随机暂存目录组装并验证后原子替换输出；首次启动不联网。详见[桌面 GUI 与言窗](/tooling/gui-applications/)。
+Bundle 包含 standalone、可检查 YXB、锁定 GUI 后端、资源、图标、应用元数据、许可证和逐文件摘要。macOS 生成标准`.app`，Windows 生成嵌入图标/版本/PerMonitorV2 manifest 的 GUI 子系统 PE 目录，Linux 生成 AppDir、Desktop Entry 和 hicolor 图标。构建器验证 PE/ELF/Mach-O 目标架构，在同级随机暂存目录组装并验证后原子替换输出；首次启动不联网。两条路线的选择见[图形界面概览](/gui/)；言界项目的具体流程见[打包与发布](/gui/packaging/)。
 
 ## 确定性与发布门禁
 
