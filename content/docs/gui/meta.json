@@ -17,6 +17,16 @@
     "layout",
     "controls",
     "themes",
-    "events"
+    "events",
+    "keyboard",
+    "pointer",
+    "text-ime",
+    "fonts",
+    "drawing",
+    "images-resources",
+    "clipboard",
+    "dialogs",
+    "multi-window",
+    "hidpi"
   ]
 }
