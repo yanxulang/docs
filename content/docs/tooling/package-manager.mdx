@@ -10,12 +10,18 @@ description: 安装独立发布、完全由言序编写的 yanbao。
 普通用户直接使用言包 Release 的跨平台安装脚本；安装包同时校验言包、启动器和专用运行时版本，不要求系统已有`yanxu`：
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/YanXuLang/yanbao/main/scripts/install.sh | sh
+curl -fsSL https://get.yanxu.dev/yanbao | sh
 yanbao --version
 yanbao doctor
 ```
 
-Windows 使用仓库中的 PowerShell 安装器。正式分发的启动器只定位同一安装目录中的`src/主.yx`和专用`yanxu-1.1.6`，所有业务逻辑仍由言序执行。只有从源码仓库开发言包时才需要言序 1.1.6 或更高版本；此时可用`YANXU_BIN=/绝对路径/yanxu`指定开发核心。任何场景都不需要 Rust 版言包，因为它不存在。
+Windows 使用 PowerShell 安装器：
+
+```powershell
+irm https://get.yanxu.dev/yanbao/windows | iex
+```
+
+正式分发的启动器只定位同一安装目录中的`src/主.yx`和专用`yanxu-1.1.6`，所有业务逻辑仍由言序执行。只有从源码仓库开发言包时才需要言序 1.1.6 或更高版本；此时可用`YANXU_BIN=/绝对路径/yanxu`指定开发核心。任何场景都不需要 Rust 版言包，因为它不存在。
 
 ## 创建项目
 
