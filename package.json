@@ -2,13 +2,22 @@
   "name": "@yanxulang/docs",
   "version": "1.1.8",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "next build && npm run redirects:generate && npm run site:check",
     "dev": "next dev",
     "start": "serve out",
+    "check": "npm run syntax:check && npm run search:test && npm run content:check && npm run types:check && npm run lint",
     "types:check": "fumadocs-mdx && next typegen && tsc --noEmit",
     "postinstall": "fumadocs-mdx",
-    "lint": "eslint"
+    "lint": "eslint",
+    "content:check": "node scripts/check-content.mjs",
+    "links:check": "node scripts/check-external-links.mjs",
+    "syntax:check": "node scripts/check-syntax.mjs",
+    "syntax:upstream": "node scripts/check-syntax.mjs --upstream",
+    "search:test": "node --experimental-strip-types --test tests/search-tokenizer.test.ts",
+    "redirects:generate": "node scripts/generate-redirects.mjs",
+    "site:check": "node scripts/check-site.mjs out"
   },
   "dependencies": {
     "@orama/orama": "^3.1.18",
@@ -32,6 +41,7 @@
     "eslint-config-next": "16.2.10",
     "postcss": "^8.5.17",
     "serve": "^14.2.6",
+    "shiki": "^4.3.1",
     "tailwindcss": "^4.3.2",
     "typescript": "^6.0.3"
   }

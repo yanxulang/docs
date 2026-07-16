@@ -18,12 +18,50 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm run types:check
-      - run: npm run lint
+      - run: npm run syntax:upstream
+      - run: npm run check
       - run: npm run build
 
-  gui-examples:
-    name: 图形界面示例
+  language-examples:
+    name: 入门语言示例
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: 检出言序 1.1.8
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          repository: YanXuLang/yanxu
+          ref: v1.1.8
+          path: target/yanxu-core
+      - name: 构建言序
+        run: cargo build --manifest-path target/yanxu-core/Cargo.toml --locked --bin yanxu
+      - name: 核对文档与可运行源码
+        shell: bash
+        run: |
+          set -euo pipefail
+          core="$GITHUB_WORKSPACE/target/yanxu-core/target/debug/yanxu"
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const pairs = [
+            ['content/docs/getting-started/first-program.mdx', 'examples/language/初见.yx'],
+            ['content/docs/getting-started/first-project.mdx', 'examples/language/问候项目.yx'],
+          ];
+          for (const [page, example] of pairs) {
+            const block = fs.readFileSync(page, 'utf8').match(/\n```yanxu\n([\s\S]*?)\n```/);
+            if (!block || `${block[1]}\n` !== fs.readFileSync(example, 'utf8')) throw new Error(`${page} 与 ${example} 不一致`);
+          }
+          NODE
+          node scripts/check-examples.mjs "$core"
+          for file in examples/language/*.yx; do
+            "$core" check "$file"
+            "$core" fmt "$file" > "$RUNNER_TEMP/格式化.yx"
+            cmp "$file" "$RUNNER_TEMP/格式化.yx"
+          done
+          test "$("$core" examples/language/初见.yx)" = "你好，言序"
+          test "$("$core" examples/language/问候项目.yx)" = $'你好，言序\n你好，开发者'
+
+  desktop-examples:
+    name: 桌面生态示例
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
@@ -42,16 +80,16 @@ jobs:
       - name: 构建言序并锁定言界
         run: |
           cargo build --manifest-path target/yanxu-core/Cargo.toml --locked --bin yanxu
-          target/yanxu-core/target/debug/yanxu 包 更新 examples/gui
+          target/yanxu-core/target/debug/yanxu 包 更新 examples/desktop
       - name: 核对文档源码、格式与静态类型
         shell: bash
         run: |
           set -euo pipefail
           core="$GITHUB_WORKSPACE/target/yanxu-core/target/debug/yanxu"
           awk '/^```yanxu$/{inside=1; next} inside && /^```$/{exit} inside {print}' \
-            content/docs/gui/complete-example.mdx > "$RUNNER_TEMP/完整示例.yx"
-          cmp examples/gui/综合控件展示.yx "$RUNNER_TEMP/完整示例.yx"
-          for file in examples/gui/*.yx; do
+            content/docs/ecosystem/desktop/complete-example.mdx > "$RUNNER_TEMP/完整示例.yx"
+          cmp examples/desktop/综合控件展示.yx "$RUNNER_TEMP/完整示例.yx"
+          for file in examples/desktop/*.yx; do
             "$core" 格 "$file" > "$RUNNER_TEMP/格式化.yx"
             cmp "$file" "$RUNNER_TEMP/格式化.yx"
             "$core" 查 "$file"
@@ -61,11 +99,11 @@ jobs:
         run: |
           set -euo pipefail
           core="$GITHUB_WORKSPACE/target/yanxu-core/target/debug/yanxu"
-          mkdir -p "$RUNNER_TEMP/gui-build"
-          for file in examples/gui/*.yx; do
+          mkdir -p "$RUNNER_TEMP/desktop-build"
+          for file in examples/desktop/*.yx; do
             name="$(basename "$file" .yx)"
-            "$core" 编 "$file" --release -o "$RUNNER_TEMP/gui-build/$name.yxb"
+            "$core" 编 "$file" --release -o "$RUNNER_TEMP/desktop-build/$name.yxb"
           done
-          test "$(find "$RUNNER_TEMP/gui-build" -type f -name '*.yxb' | wc -l)" -eq 3
+          test "$(find "$RUNNER_TEMP/desktop-build" -type f -name '*.yxb' | wc -l)" -eq 3
       - name: 运行自动关闭真实窗口
-        run: xvfb-run -a target/yanxu-core/target/debug/yanxu 字节 examples/gui/自动关闭冒烟.yx
+        run: xvfb-run -a target/yanxu-core/target/debug/yanxu 字节 examples/desktop/自动关闭冒烟.yx
