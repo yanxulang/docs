@@ -7,7 +7,7 @@ import yanjuGrammar from './syntaxes/yanju.tmLanguage.json';
 const yanxuLanguage = {
   ...yanxuGrammar,
   name: 'yanxu',
-  aliases: ['yx'],
+  aliases: ['yx', '言序'],
 } as unknown as LanguageRegistration;
 
 const yanjuLanguage = {
