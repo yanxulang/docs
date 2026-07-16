@@ -1,0 +1,81 @@
+---
+title: 1.1.8 命令工具
+description: 使用静态检查、格式化、测试、YXB、字节码、调试、文档与 LSP。
+---
+
+## 检查与格式化
+
+```sh
+yanxu 查 src/主.yx
+yanxu 格 src/主.yx
+yanxu 格 --写 src/主.yx
+```
+
+`查`会运行词法、语法、语义与静态类型阶段，但不执行用户代码。`格`默认把规范源码写到标准输出，`--写`才替换文件。格式化结果是幂等的。
+
+## 规格测试
+
+```yanxu
+# 期：3
+言 1 加 2；
+```
+
+```sh
+yanxu 试 tests/spec --筛 容器 --并发 4 --超时 3000
+yanxu 试 tests/spec --json > 测试报告.json
+```
+
+每个 `.yx` 文卷是一个独立用例；`# 期：` 或 `// 期：` 按出现顺序声明期望输出。没有期望行时，无错执行即算通过。`# 预败：错误片段`声明预期失败；意外通过、错误类型变化和超时都有独立状态。JSON 报告含稳定 schema、汇总、逐卷状态和耗时。
+
+## VM、调试与文档
+
+```sh
+yanxu 字节 examples/VM入门.yx
+yanxu 字节 --反汇编 examples/VM入门.yx
+yanxu 调 examples/初见.yx
+yanxu 文 src/数学.yx api/数学.md
+yanxu 文 --json src/数学.yx api/数学.json
+yanxu 文 src api/全库.md
+yanxu 基准 10
+```
+
+`调`适合一次性打印语句踪迹；编辑器通过`yanxu 调试服务`启动 DAP 适配器，可设置源码断点、继续、单步并检查栈与作用域变量。`文`只记录`公`API，读取`///`/`#:`声明注释并生成类型链接、稳定锚点与模块索引；目录输入会汇总多模块。
+
+## LSP
+
+```sh
+yanxu 语言服务
+```
+
+服务使用 LSP stdio framing 和 UTF-16 坐标，实现文档同步、前端/类型诊断、全文格式化、语义补全、定义跳转、引用、重命名、类型/注释悬停与层级文档符号。
+
+## 编译和运行应用
+
+```sh
+yanxu compile . -o build/应用.yxb --release
+yanxu run build/应用.yxb -- --once
+yanxu compile . -o build/应用 --release --standalone
+yanxu compile . -o build/应用.app --release --bundle
+yanxu version --json
+```
+
+YXB 包含可达的项目模块、锁定依赖、资源、权限、应用元数据和当前目标原生制品，不依赖原始源码；`--standalone`封装单文件 VM，`--bundle`生成当前平台桌面应用目录。完整发布流程见[应用构建](/tooling/building-apps/)。`version --json`除格式能力外还报告构建提交 SHA、目标平台、构建模式、ABI v1/v2 与独立 GUI 权限；工程工具应先协商能力，并把该身份写入验收记录。
+
+## 按权限运行包
+
+```sh
+yanxu 包
+yanxu 包 运行
+```
+
+`包`显示入口、依赖和声明的宿主能力；`包 运行`按清单`[权限]`执行入口。核心命令继续作为运行时兼容入口，创建项目、增删与安装依赖请使用[言包包管理器](/tooling/package-manager/)。直接执行单一文卷保留 0.7 的不受限兼容行为。沙箱和多语言宿主接口见[嵌入与宿主权限](/guides/embedding/)。
+
+## 兼容、迁移与标准库清单
+
+```sh
+yanxu 兼容 --json
+yanxu 迁 --差异 src/主.yx
+yanxu 标准库 --json
+```
+
+这些命令分别生成跨执行器兼容报告、检查或应用弃用迁移，以及输出标准库权限和 API 审计；格式说明见[兼容、迁移与公共格式](/reference/formats/)。

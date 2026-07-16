@@ -1,45 +1,40 @@
 ---
 title: 言序文档
-description: 言序编程语言、言据、原生图形界面、Web 基础库、第三方库、工具链与生态项目文档。
+description: 从第一行现代中文程序，到具有清晰模块、依赖与权限边界的完整项目。
 ---
 
-言序是一门由 Rust 实现的现代中文编程语言。你可以使用中文关键字、中文标识符和全角标点，同时获得类型、容器、模块与结构化错误等工程能力。
+言序是一门由 Rust 实现的现代中文编程语言。中文关键字、中文标识符与全角标点直接进入语法；类型、模块、结构化错误、树解释器、字节码 VM 和工程工具共同约束程序边界。
 
-## 使用言包管理项目
+<Callout type="info" title="当前稳定基线">
+  本站对应言序核心 1.1.8、言包 0.5.0、言据 1.1.2 与 VS Code 扩展 1.4.0。页面会区分语言核心、标准库、官方工具和独立生态包，不把规划中的能力写成现状。
+</Callout>
 
-言包（`yanbao`）是言序项目的默认入口。创建项目、添加依赖和运行检查均通过一套稳定命令完成：
-
-```sh
-yanbao init 我的项目 --name 示例
-cd 我的项目
-yanbao add http
-yanbao check
-yanbao test
-```
-
-官方 GitHub 包可省略`yanxulang/`组织名和`yanxu-`前缀：`yanbao add http`等价于添加`yanxulang/yanxu-http`。完整安装与来源规则见[言包工程工具](/tooling/package-manager/)。
+## 第一次使用
 
 <Cards>
-  <Card title="开始使用" description="安装言序并运行第一份中文程序" href="/getting-started/" />
-  <Card title="言包：项目与依赖" description="创建项目，以短包名添加 GitHub 依赖并构建应用" href="/tooling/package-manager/" />
-  <Card title="学习路线" description="按目标选择从入门到工程实践的阅读顺序" href="/getting-started/learning-path/" />
-  <Card title="语言指南" description="按主题学习语法、类型与运行语义" href="/language/" />
-  <Card title="言据" description="使用中文数据格式保存配置、交换数据与处理流" href="/yanju/" />
-  <Card title="图形界面" description="用言窗或言界构建 Windows、macOS 与 Linux 原生桌面应用" href="/gui/" />
-  <Card title="言枢与言标" description="用中文应用框架与安全 HTML 超集构建网络项目" href="/web/" />
-  <Card title="工具链" description="使用命令行、编辑器、构建与调试工具" href="/tooling/" />
-  <Card title="第三方库" description="验证、日志、数据库、日期时间、测试与通用工程能力" href="/libraries/" />
-  <Card title="项目设计" description="了解运行时架构与长期演进计划" href="/project/" />
+  <Card title="开始使用" description="安装环境，配置编辑器，运行第一份程序并创建项目" href="/getting-started/" />
+  <Card title="学习语言" description="按基础、控制流、函数、容器、对象与模块的顺序学习" href="/language/" />
+  <Card title="项目工程" description="理解清单、完整锁图、权限、资源、测试与发布" href="/projects/" />
+  <Card title="快速参考" description="查询文法、CLI、公共格式、错误与兼容政策" href="/reference/" />
+</Cards>
+
+## 按任务查找
+
+<Cards>
+  <Card title="标准库" description="查询 25 个版本化标准模块及其平台与权限边界" href="/standard-library/" />
+  <Card title="工具链" description="使用言包、VS Code、检查、格式化、测试、构建与发布工具" href="/tooling/" />
+  <Card title="实践指南" description="组合配置、Web、嵌入与参考项目完成真实任务" href="/guides/" />
+  <Card title="生态" description="了解言据、Web 与网络、第三方包和桌面应用方案" href="/ecosystem/" />
+  <Card title="设计与贡献" description="面向实现者阅读架构、提案流程、贡献规范和长期路线" href="/design/" />
 </Cards>
 
 ## 建议阅读顺序
 
-第一次接触言序时，先完成[安装](/getting-started/installation/)和[第一份程序](/getting-started/first-program/)，再沿[学习路线](/getting-started/learning-path/)逐步进入语言指南。需要保存应用配置或交换结构化数据时，继续阅读[言据](/yanju/)；开始构建真实应用时，可从[第三方库](/libraries/)选择验证、日志、数据访问、日期时间和测试能力。已经熟悉言序时，可以直接把语言指南、言据、第三方库和工具链页面作为速查手册使用。
+1. 完成[安装](/getting-started/installation/)、[编辑器设置](/getting-started/editor/)和[第一份程序](/getting-started/first-program/)。
+2. 创建[第一个项目](/getting-started/first-project/)，形成[日常反馈循环](/getting-started/daily-workflow/)。
+3. 沿[语言学习路线](/language/)掌握可复用程序所需的核心概念。
+4. 在需要时进入[项目工程](/projects/)、[标准库](/standard-library/)或[实践指南](/guides/)。
 
-如果你准备参与实现或工具开发，请继续阅读[从源码构建](/tooling/source-build/)和[运行时架构](/project/architecture/)。
+语言核心不内置 Web 框架或桌面控件；这些能力在独立生态包中按自己的版本与兼容政策演进。若你准备修改语言实现，再进入[设计与贡献](/design/)，不必把路线图当作入门前置。
 
-## 当前版本
-
-文档对应言序核心`1.1.8`、言包`0.5.0`、言据`1.1.2`、言台`0.1.0`与言界`0.1.0`。本版在 ABI v1 和旧 YXB 兼容的基础上提供原生 ABI v2、持久回调、有界宿主事件队列、代际父子资源、独立 GUI 权限、可携带锁定原生后端的 YXB，以及 Windows、macOS、Linux 桌面 Bundle；1.1.8 还修复 Windows 图形回调路径的运行时栈不足。现有`yanxu-gui`（言窗）继续提供成熟的立即模式路线；新路线由`yanxu-ui`（言界）以言序实现保留模式控件，并经`yanxu-platform`（言台）访问统一平台原语。核心仍不把 GUI 或 Web 框架塞进标准库。开始桌面开发前请阅读[图形界面概览](/gui/)、[选择 GUI 路线](/gui/choosing/)、[1.1.8 迁移指南](/tooling/migration-1.1.8/)与[兼容政策](/project/compatibility/)。
-
-需要立即获取发行版时，可前往[下载中心](https://yanxu.dev/download/)；可运行示例位于[语言核心仓库](https://github.com/YanXuLang/yanxu/tree/main/examples)。
+正式发行版见[下载中心](https://yanxu.dev/download/)，语言实现与可运行示例见[YanXuLang/yanxu](https://github.com/YanXuLang/yanxu)。

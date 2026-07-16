@@ -11,6 +11,7 @@ import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/components/mdx';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
+import { InlineTOC } from 'fumadocs-ui/components/inline-toc';
 import { gitConfig } from '@/lib/shared';
 
 export default async function Page(props: PageProps<'/[[...slug]]'>) {
@@ -20,9 +21,30 @@ export default async function Page(props: PageProps<'/[[...slug]]'>) {
 
   const MDX = page.data.body;
   const markdownUrl = getPageMarkdownUrl(page).url;
+  const canonicalUrl = new URL(page.url, 'https://docs.yanxu.dev/').toString();
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: page.data.title,
+    description: page.data.description,
+    url: canonicalUrl,
+    inLanguage: 'zh-CN',
+    isPartOf: { '@type': 'WebSite', name: '言序文档', url: 'https://docs.yanxu.dev/' },
+    author: { '@type': 'Organization', name: 'YanXuLang', url: 'https://github.com/YanXuLang' },
+  };
 
   return (
-    <DocsPage toc={page.data.toc} full={page.data.full}>
+    <DocsPage
+      toc={page.data.toc}
+      full={page.data.full}
+      role="main"
+      tableOfContent={{ container: { role: 'complementary', 'aria-labelledby': 'toc-title' } }}
+      tableOfContentPopover={{ enabled: false }}
+    >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replaceAll('<', '\\u003c') }}
+      />
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription className="mb-0">{page.data.description}</DocsDescription>
       <div className="flex flex-row gap-2 items-center border-b pb-6">
@@ -32,6 +54,11 @@ export default async function Page(props: PageProps<'/[[...slug]]'>) {
           githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/content/docs/${page.path}`}
         />
       </div>
+      {page.data.toc.length > 0 && (
+        <InlineTOC items={page.data.toc} className="xl:hidden">
+          本页目录
+        </InlineTOC>
+      )}
       <DocsBody>
         <MDX
           components={getMDXComponents({
@@ -52,12 +79,26 @@ export async function generateMetadata(props: PageProps<'/[[...slug]]'>): Promis
   const params = await props.params;
   const page = source.getPage(params.slug);
   if (!page) notFound();
+  const isHome = !params.slug?.length;
 
   return {
-    title: page.data.title,
+    title: isHome ? { absolute: '言序文档 · 现代中文编程语言' } : page.data.title,
     description: page.data.description,
+    alternates: { canonical: page.url },
     openGraph: {
-      images: getPageImage(page).url,
+      type: 'article',
+      locale: 'zh_CN',
+      siteName: '言序文档',
+      title: page.data.title,
+      description: page.data.description,
+      url: page.url,
+      images: [{ url: getPageImage(page).url, width: 1200, height: 630, alt: page.data.title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: page.data.title,
+      description: page.data.description,
+      images: [getPageImage(page).url],
     },
   };
 }

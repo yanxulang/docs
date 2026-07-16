@@ -1,0 +1,23 @@
+{
+  "title": "第三方包",
+  "description": "言序社区维护的现代工程库、数据栈与测试工具。",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "installation",
+    "composition",
+    "markdown",
+    "jwt",
+    "collections",
+    "cli",
+    "semver",
+    "retry",
+    "datetime",
+    "validate",
+    "log",
+    "db",
+    "sqlite",
+    "orm",
+    "test"
+  ]
+}

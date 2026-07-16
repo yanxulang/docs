@@ -1,0 +1,69 @@
+---
+title: 言序 Web 开发
+description: 从言枢与言标开始，理解框架、模板、安全 HTML、HTTP 和完整博客的职责边界。
+---
+
+言序 Web 栈以“言枢”作为应用入口，以内建子项目“言标”表达页面，并继续让`yanxu-html`和`yanxu-http`分别守住底层输出与协议边界。
+
+```sh
+yanbao add web --version '^0.2'
+```
+
+```text
+yanxu-webblog    言枢配置 · 言标页面 · JSON/言据 · 静态文件
+      │
+      ▼
+言枢（yanxu-web）  应用 · 命名路由 · 中间件 · 测试客户端
+      │
+      ├── 言标      自动转义 · 条件/循环 · 包含/继承
+      ├── yanxu-html  安全节点 · 属性与 URL 规则
+      └── yanxu-http  HTTP/1.1 请求 · 响应 · Cookie
+```
+
+<Cards>
+  <Card title="言枢" description="配置化应用、命名路由、反向 URL、中间件、错误与测试客户端" href="/ecosystem/web/framework/" />
+  <Card title="言标" description="内建的中文 HTML 超集：自动转义、控制流、包含与继承" href="/ecosystem/web/yanbiao/" />
+  <Card title="安全 HTML" description="底层节点、属性、URL 白名单和显式原始内容" href="/ecosystem/web/html/" />
+  <Card title="HTTP/1.1" description="严格且受预算约束的请求、响应与连接基础" href="/ecosystem/web/http/" />
+  <Card title="言枢博客" description="同时提供页面、JSON、言据和静态文件的完整参考项目" href="/ecosystem/web/webblog/" />
+</Cards>
+
+## 如何选择
+
+| 目标 | 从哪里开始 |
+| --- | --- |
+| 建立常规服务端 Web 项目 | 使用[言枢](/ecosystem/web/framework/)和[言标](/ecosystem/web/yanbiao/)。 |
+| 生成邮件、静态片段或底层 HTML 节点 | 直接使用[yanxu-html](/ecosystem/web/html/)。 |
+| 学习协议解析或自建服务器 | 直接使用[yanxu-http](/ecosystem/web/http/)。 |
+| 改造一个可运行项目 | 克隆[言枢博客](/ecosystem/web/webblog/)。 |
+| 从 0.1 升级 | 阅读[0.2 迁移指南](/ecosystem/web/migration-0.2/)。 |
+
+## 0.2 的重点
+
+言枢 0.2 新增集中配置、命名路由、反向 URL、路由组、自定义 404/405、JSON 正文、言标模板响应和无端口测试客户端。言标支持`{{ 路径 }}`自动转义插值、中文条件与循环、包含、模板继承、过滤器和显式可信 HTML。
+
+技术包标识和仓库仍为`yanxu-web`，源码建议使用：
+
+```yanxu
+引「包:web」为 言枢；
+```
+
+## 推荐学习顺序
+
+1. [言枢框架](/ecosystem/web/framework/)：创建配置化应用与命名路由；
+2. [言标模板](/ecosystem/web/yanbiao/)：理解自动转义、控制流和继承；
+3. [安全 HTML](/ecosystem/web/html/)：理解更低层的节点与信任升级；
+4. [HTTP/1.1](/ecosystem/web/http/)：理解请求、响应和连接预算；
+5. [完整博客](/ecosystem/web/webblog/)：沿真实项目阅读所有层；
+6. [安全与路线图](/ecosystem/web/security-roadmap/)：确认生产边界。
+
+## 运行参考项目
+
+```sh
+git clone https://github.com/yanxulang/yanxu-web.git
+git clone https://github.com/yanxulang/yanxu-webblog.git
+yanbao install --manifest-path yanxu-web
+yanbao install --manifest-path yanxu-webblog
+```
+
+核心运行时本身仍不内置 Web 框架；这些能力以独立包演进。言包锁文件固定精确 Git 修订和内容校验，依赖包的宿主权限不会自动传递给应用。

@@ -1,0 +1,26 @@
+---
+title: 日常工作流
+description: 用检查、格式化、测试、运行和构建形成可重复的项目反馈循环。
+---
+
+在项目根目录保持这一顺序：
+
+```sh
+yanbao check
+yanxu fmt --write src
+yanbao test
+yanbao run
+yanbao build --release
+```
+
+| 阶段 | 目的 | 适合何时运行 |
+| --- | --- | --- |
+| `check` | 发现词法、语法、类型、模块与清单问题 | 每次编辑后 |
+| `fmt --write` | 写回稳定、幂等的规范格式 | 提交前或保存时 |
+| `test` | 执行目录规格并比较期望输出 | 改动行为后 |
+| `run` | 通过项目入口与声明权限运行 | 本地验证完整流程 |
+| `build --release` | 生成优化的 YXB 或目标制品 | 发布候选阶段 |
+
+依赖变化后先运行`yanbao install`，并把`言序.toml`与`言序.lock`一起提交。不要手工修改锁文件；需要理解某个包为何出现时，使用`yanbao tree`与`yanbao why 包名`。
+
+CI 至少应执行检查、格式化一致性、规格测试和构建。编辑器诊断用于缩短反馈时间，但不能代替这些可重复命令。命令全集见[CLI 参考](/reference/cli/)，项目边界见[项目工程](/projects/)。

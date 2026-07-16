@@ -1,0 +1,27 @@
+---
+title: 构建与发布
+description: 从可重复检查进入 YXB、Standalone、Bundle 与确定性包制品。
+---
+
+发布候选至少经过：
+
+```sh
+yanbao check
+yanbao test
+yanbao audit
+yanbao build --release
+```
+
+默认构建生成 YXB 应用。YXB 包含可达模块、锁定依赖、资源、权限、应用元数据和当前目标的锁定原生制品，不依赖原始源码。
+
+```sh
+yanbao build --release --standalone
+yanbao build --release --bundle
+yanbao pack
+```
+
+- `--standalone`封装当前平台的单文件 VM 与应用。
+- `--bundle`面向声明了应用元数据的桌面项目，生成当前平台应用目录；它不是跨平台交叉构建器。
+- `pack`生成确定性的 `.yxp`分发包。
+
+同一输入应生成逐字节稳定的 YXB/YXP。摘要用于完整性校验，不等同于发布者签名。发布前还应在目标系统验证启动、权限拒绝路径和资源完整性；桌面 Bundle 的平台细节见[应用构建](/tooling/building-apps/)。

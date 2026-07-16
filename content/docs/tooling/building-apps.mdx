@@ -3,7 +3,7 @@ title: YXB 与独立应用
 description: 把言序项目编译为不依赖原始源码的确定性应用制品。
 ---
 
-言序 1.1.7 的“完整编译”是完整包字节码编译，不是 LLVM 或 Cranelift 机器码后端。编译器读取格式 2 锁图，把入口、项目模块、依赖模块、声明资源、权限、应用元数据、当前目标原生制品和调试路径写入 YXB 应用归档。
+言序 1.1.8 沿用 1.1.7 引入的“完整编译”：它是完整包字节码编译，不是 LLVM 或 Cranelift 机器码后端。编译器读取格式 2 锁图，把入口、项目模块、依赖模块、声明资源、权限、应用元数据、当前目标原生制品和调试路径写入 YXB 应用归档。
 
 ## 直接使用核心
 
@@ -42,7 +42,7 @@ yanbao build --release --bundle
 # 或 yanxu compile . --release --bundle
 ```
 
-Bundle 包含 standalone、可检查 YXB、锁定 GUI 后端、资源、图标、应用元数据、许可证和逐文件摘要。macOS 生成标准`.app`，Windows 生成嵌入图标/版本/PerMonitorV2 manifest 的 GUI 子系统 PE 目录，Linux 生成 AppDir、Desktop Entry 和 hicolor 图标。构建器验证 PE/ELF/Mach-O 目标架构，在同级随机暂存目录组装并验证后原子替换输出；首次启动不联网。两条路线的选择见[图形界面概览](/gui/)；言界项目的具体流程见[打包与发布](/gui/packaging/)。
+Bundle 包含 standalone、可检查 YXB、锁定 GUI 后端、资源、图标、应用元数据、许可证和逐文件摘要。macOS 生成标准`.app`，Windows 生成嵌入图标/版本/PerMonitorV2 manifest 的 GUI 子系统 PE 目录，Linux 生成 AppDir、Desktop Entry 和 hicolor 图标。构建器验证 PE/ELF/Mach-O 目标架构，在同级随机暂存目录组装并验证后原子替换输出；首次启动不联网。两条路线的选择见[图形界面概览](/ecosystem/desktop/)；言界项目的具体流程见[打包与发布](/ecosystem/desktop/packaging/)。
 
 ## 确定性与发布门禁
 

@@ -1,6 +1,15 @@
 {
   "title": "开始使用",
-  "description": "完成安装、运行程序，并选择后续学习路线。",
+  "description": "从安装环境到完成第一个可维护项目。",
   "defaultOpen": true,
-  "pages": ["index", "installation", "first-program", "cli-repl", "learning-path"]
+  "pages": [
+    "index",
+    "installation",
+    "editor",
+    "first-program",
+    "first-project",
+    "daily-workflow",
+    "cli-repl",
+    "next-steps"
+  ]
 }

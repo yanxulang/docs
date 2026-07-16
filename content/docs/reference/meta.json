@@ -1,0 +1,16 @@
+{
+  "title": "参考",
+  "description": "集中查询文法、命令、格式、权限、错误与兼容政策。",
+  "pages": [
+    "index",
+    "grammar",
+    "cli",
+    "project-format",
+    "permissions",
+    "error-codes",
+    "formats",
+    "compatibility",
+    "migrations",
+    "faq"
+  ]
+}

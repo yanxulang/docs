@@ -1,0 +1,14 @@
+---
+title: 迁移指南
+description: 按目标版本核对行为、权限、公共格式和应用制品变化。
+---
+
+升级前先提交清单与锁文件，记录当前`yanxu version --json`，并在独立分支运行检查、格式化、规格测试和构建。跨多个版本时按时间顺序逐份阅读，不要只看最后一版。
+
+<Cards>
+  <Card title="迁移到 1.1.6" description="宿主权限交集、包信任与原生扩展边界" href="/reference/migrations/1.1.6/" />
+  <Card title="迁移到 1.1.7" description="ABI v2、独立桌面权限、YXB 与 Bundle 变化" href="/reference/migrations/1.1.7/" />
+  <Card title="迁移到 1.1.8" description="Windows 图形回调栈修复与制品重建要求" href="/reference/migrations/1.1.8/" />
+</Cards>
+
+源码弃用可先运行`yanxu migrate --check`或`yanxu migrate --diff`。公共格式主版本与兼容策略见[公共格式](/reference/formats/)和[1.x 兼容政策](/reference/compatibility/)。

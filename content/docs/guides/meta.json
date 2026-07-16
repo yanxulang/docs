@@ -1,0 +1,5 @@
+{
+  "title": "实践指南",
+  "description": "围绕真实任务组合语言、工具与生态包。",
+  "pages": ["index", "data-configuration", "web-application", "desktop-application", "embedding", "reference-projects"]
+}

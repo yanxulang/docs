@@ -1,0 +1,16 @@
+---
+title: 项目工程
+description: 从单一文卷进入具有清单、锁图、权限、测试与发布制品的完整项目。
+---
+
+项目把语言源码放进可重复的工程边界。`言序.toml`声明意图，`言序.lock`固定解析结果，言包负责编辑与验证二者，核心负责统一执行、检查和构建语义。
+
+<Cards>
+  <Card title="项目结构" description="识别源码、测试、资源、清单、锁文件与派生目录" href="/projects/structure/" />
+  <Card title="项目清单" description="理解格式 2 的包、导出、资源、权限与构建表" href="/projects/manifest/" />
+  <Card title="依赖与锁图" description="管理路径、Git、索引依赖和完整传递图" href="/projects/dependencies/" />
+  <Card title="权限与资源" description="按最小能力声明文件、网络、环境和宿主功能" href="/projects/permissions/" />
+  <Card title="构建与发布" description="从检查和规格测试进入 YXB、Standalone 与 Bundle" href="/projects/build-release/" />
+</Cards>
+
+项目有三条重要不变量：依赖不能传递权限；运行时不能越过宿主授权上限；未知公共格式主版本必须被拒绝。第一次建项请先完成[第一个项目](/getting-started/first-project/)。

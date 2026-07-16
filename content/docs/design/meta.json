@@ -1,0 +1,5 @@
+{
+  "title": "设计与贡献",
+  "description": "理解实现边界、语言设计流程与贡献方式。",
+  "pages": ["index", "architecture", "language-design", "contributing", "roadmap"]
+}
