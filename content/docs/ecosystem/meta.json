@@ -1,0 +1,5 @@
+{
+  "title": "生态",
+  "description": "围绕语言核心独立演进的数据、Web、包与桌面能力。",
+  "pages": ["index", "yanju", "web", "libraries", "desktop"]
+}

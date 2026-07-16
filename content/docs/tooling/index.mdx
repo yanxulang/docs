@@ -1,21 +1,16 @@
 ---
 title: 工具链
-description: 言序编辑器支持、源码构建方式与项目仓库入口。
+description: 使用统一核心能力编辑、检查、测试、构建、调试和发布言序项目。
 ---
 
 <Cards>
-  <Card title="言包工程工具" description="完全由言序编写的项目、依赖、构建与打包工作流" href="/tooling/package-manager/" />
-  <Card title="1.1.8 命令工具" description="检查、测试、YXB/Bundle 构建、运行、调试与 LSP" href="/tooling/cli-tools/" />
-  <Card title="原生图形界面" description="比较言窗与言界两条路线，创建跨平台桌面应用" href="/gui/" />
-  <Card title="应用构建" description="生成源码无关 YXB 和当前平台自包含应用" href="/tooling/building-apps/" />
-  <Card title="原生扩展 ABI v1/v2" description="类型值、持久回调、资源和宿主事件循环" href="/tooling/native-extensions/" />
-  <Card title="VS Code 扩展" description="安装语法高亮、代码片段与运行命令" href="/tooling/vscode/" />
-  <Card title="嵌入与权限" description="从 Rust、C、WASI 安全调用言序" href="/tooling/embedding/" />
-  <Card title="兼容与迁移" description="运行版本语料并处理弃用与公共格式" href="/tooling/compatibility/" />
-  <Card title="升级到 1.1.8" description="修复 Windows 图形回调栈并重建 Bundle" href="/tooling/migration-1.1.8/" />
-  <Card title="升级到 1.1.7" description="迁移 GUI、ABI v2、权限和 Bundle 构建" href="/tooling/migration-1.1.7/" />
-  <Card title="从源码构建" description="检出语言核心并运行完整测试" href="/tooling/source-build/" />
-  <Card title="下载中心" description="获取 Windows、macOS 与 Linux 发行版" href="https://yanxu.dev/download/" />
+  <Card title="言包" description="创建项目，解析完整依赖图，测试、构建、打包与审计" href="/tooling/package-manager/" />
+  <Card title="VS Code 扩展" description="语法高亮、格式化、诊断、LSP 语义编辑与 DAP 调试入口" href="/tooling/vscode/" />
+  <Card title="CLI 参考" description="运行、检查、测试、YXB、文档、兼容与机器可读输出" href="/reference/cli/" />
+  <Card title="应用构建" description="生成源码无关 YXB、当前平台 Standalone 与 Bundle" href="/tooling/building-apps/" />
+  <Card title="原生扩展" description="了解 ABI v1/v2、类型值、回调、资源和信任边界" href="/tooling/native-extensions/" />
+  <Card title="嵌入宿主" description="从 Rust、C 或 WASI 调用言序并限制权限与预算" href="/guides/embedding/" />
+  <Card title="从源码构建" description="检出语言核心并运行完整 Rust 与兼容门禁" href="/tooling/source-build/" />
 </Cards>
 
-命令行的日常使用方式见[命令行与 REPL](/getting-started/cli-repl/)。语言实现和工具链的职责边界见[运行时架构](/project/architecture/)。
+日常命令顺序见[工作流](/getting-started/daily-workflow/)，公共格式和迁移见[参考](/reference/)。需要应用层能力时，再按任务进入[生态](/ecosystem/)。

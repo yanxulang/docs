@@ -1,24 +1,21 @@
 {
-  "title": "语言指南",
-  "description": "按主题学习言序语法与运行语义。",
+  "title": "学习语言",
+  "description": "按概念顺序学习言序语法、类型与运行语义。",
   "defaultOpen": true,
   "pages": [
     "index",
-    "---语言基础---",
+    "---核心概念---",
     "basics",
     "control-flow",
     "functions",
-    "tasks",
-    "---数据与抽象---",
     "collections",
-    "binary-data",
     "objects",
-    "---程序组织与可靠性---",
+    "---组织与可靠性---",
     "modules",
     "errors",
-    "sockets",
-    "---参考---",
-    "standard-library",
-    "grammar"
+    "tasks",
+    "---系统能力---",
+    "binary-data",
+    "sockets"
   ]
 }

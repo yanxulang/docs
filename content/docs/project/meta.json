@@ -1,5 +1,0 @@
-{
-  "title": "项目设计",
-  "description": "言序的实现架构、设计边界与长期计划。",
-  "pages": ["index", "architecture", "compatibility", "reference-projects", "roadmap"]
-}

@@ -1,4 +1,15 @@
 {
   "title": "言序文档",
-  "pages": ["index", "getting-started", "language", "yanju", "gui", "web", "tooling", "libraries", "project"]
+  "pages": [
+    "index",
+    "getting-started",
+    "language",
+    "projects",
+    "tooling",
+    "standard-library",
+    "guides",
+    "ecosystem",
+    "reference",
+    "design"
+  ]
 }

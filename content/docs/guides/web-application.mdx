@@ -1,0 +1,16 @@
+---
+title: Web 应用
+description: 在明确当前协议范围与安全责任后选择言枢、言标、HTML 或 HTTP 层。
+---
+
+言序核心不内置 Web 框架。当前生态把职责分成四层：言枢组织应用、路由与中间件；言标提供自动转义模板；`yanxu-html`提供安全节点；`yanxu-http`提供受预算约束的 HTTP/1.1 基础。
+
+建议顺序：
+
+1. 阅读[Web 与网络总览](/ecosystem/web/)，确认目标是否在当前支持范围内。
+2. 常规服务端应用从[言枢](/ecosystem/web/framework/)和[言标](/ecosystem/web/yanbiao/)开始。
+3. 只有需要底层节点或协议对象时，再进入[安全 HTML](/ecosystem/web/html/)或[HTTP/1.1](/ecosystem/web/http/)。
+4. 沿[言枢博客](/ecosystem/web/webblog/)运行页面、JSON、言据 API、静态文件和测试。
+5. 发布前逐项检查[安全边界](/ecosystem/web/security-roadmap/)。
+
+这些库不替代 TLS 终止、CSP、Cookie 策略、身份认证、业务授权、限流和生产级反向代理。网络外连与监听权限必须在顶层项目清单中显式声明。

@@ -1,34 +1,36 @@
 ---
 title: 安装
-description: 在 macOS、Linux 或 Windows 上安装并验证言序。
+description: 在 Windows、macOS 或 Linux 上安装并验证言序 1.1.8 与言包 0.5.0。
 ---
 
 ## macOS 与 Linux
 
 ```sh
 curl -fsSL https://get.yanxu.dev | sh
+curl -fsSL https://get.yanxu.dev/yanbao | sh
 ```
 
 ## Windows PowerShell
 
 ```powershell
 irm https://get.yanxu.dev/windows | iex
+irm https://get.yanxu.dev/yanbao/windows | iex
 ```
+
+安装器会选择当前系统与架构的正式制品并校验摘要。需要离线安装、固定制品或自行核验 SHA-256 时，请使用[下载中心](https://yanxu.dev/download/)中的发行归档。
 
 ## 验证安装
 
-安装完成后查看版本：
+重新打开终端后执行：
 
 ```sh
 yanxu --version
+yanbao --version
+yanbao doctor
 ```
 
-项目初始化、依赖管理和打包由官方[言包](/tooling/package-manager/)完成。安装言序后，再安装言包：
+稳定基线应分别报告言序 1.1.8 与言包 0.5.0。言包复用 `PATH` 中的言序运行时，不安装第二份核心，也不要求 Rust。
 
-```sh
-curl -fsSL https://get.yanxu.dev/yanbao | sh
-```
+若命令不存在，先确认安装器提示的目录已经加入 `PATH`；若版本较旧，重新运行对应安装器。只在参与语言实现或安装器不支持当前环境时，改用[从源码构建](/tooling/source-build/)。
 
-言包 0.5.0 完全由言序编写，复用`PATH`中的言序 1.1.7 或更高版本；不需要 Rust，也不会安装或覆盖另一份运行时。
-
-如果你希望参与语言实现，或安装器不适用于当前环境，请改用[从源码构建](/tooling/source-build/)。
+下一步配置[编辑器](/getting-started/editor/)。

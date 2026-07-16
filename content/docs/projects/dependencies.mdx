@@ -1,0 +1,28 @@
+---
+title: 依赖与锁图
+description: 使用言包管理直接依赖，并理解完整、确定、可离线复现的锁图。
+---
+
+常用来源都通过同一命令进入清单：
+
+```sh
+yanbao add http --version '^0.1'
+yanbao add acme/yanxu-tools
+yanbao add 共享工具 --path ../共享工具 --version '^1'
+yanbao add 测试工具 --dev --path ../测试工具
+yanbao install
+```
+
+官方短名`http`映射到`yanxulang/yanxu-http`；第三方 GitHub 包使用`组织/仓库`。只有自定义 Git URL、路径或注册表需要显式来源选项。
+
+格式 2 锁文件固定直接和传递包的精确版本、Git 提交、内容校验和、来源、依赖边、入口、导出、最低言序版本、目标平台与原生制品。检查、运行和构建只使用这张图，不会在导入时临时重新选版。
+
+```sh
+yanbao tree
+yanbao why http
+yanbao outdated
+yanbao update --dry-run
+yanbao audit
+```
+
+清单变化后提交新的清单和锁文件。离线安装只能复用已缓存或`vendor`保存、且与锁图逐包一致的内容。依赖包的权限不会传给应用；顶层项目必须独立声明所需能力。

@@ -1,0 +1,16 @@
+---
+title: 错误代码参考
+description: 按稳定代码处理运行、网络、套接字、字节与原生扩展失败。
+---
+
+捕获到的`误`值提供`.代码`、`.类别`、`.消息`、`.踪迹`和`.位置`。程序应按代码分支，不要解析可能改进的消息文字。
+
+| 类别 | 稳定代码族 | 典型含义 |
+| --- | --- | --- |
+| 运行 | `RUN000` | 普通运行错误或用户抛出的普通值 |
+| 网络 | `NET_PERMISSION`、`NET_URL`、`NET_DNS`、`NET_CONNECT`、`NET_TLS`、`NET_TIMEOUT`、`NET_LIMIT`、`NET_PROTOCOL`、`NET_UTF8` | 高层网络请求的权限、地址、连接、预算、协议与正文错误 |
+| 套接字 | `SOCKET_PERMISSION`、`SOCKET_ADDRESS`、`SOCKET_DNS`、`SOCKET_CONNECT`、`SOCKET_BIND`、`SOCKET_ACCEPT`、`SOCKET_TIMEOUT`、`SOCKET_LIMIT`、`SOCKET_STATE`、`SOCKET_EOF`、`SOCKET_UTF8`、`SOCKET_UNSUPPORTED` | TCP/UDP 资源与 I/O 错误 |
+| 字节 | `BYTES_UTF8`、`BYTES_LIMIT`、`BYTES_RANGE`、`BYTES_VALUE`、`BYTES_TYPE`、`BYTES_RANDOM`、`BYTES_CRYPTO` | 解码、4 MiB 上限、索引、值与密码操作错误 |
+| 原生 | `NATIVE_PERMISSION`、`NATIVE_VALUE`、`NATIVE_ERROR` | ABI 权限、跨边界值和宿主回调错误 |
+
+词法、语法和语义诊断发生在执行前，不能由`试…救`捕获。完整网络与套接字子码、调用踪迹和示例见[结构化错误](/language/errors/)。
