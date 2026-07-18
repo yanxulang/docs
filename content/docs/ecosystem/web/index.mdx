@@ -1,69 +1,71 @@
 ---
-title: 言序 Web 开发
-description: 从言枢与言标开始，理解框架、模板、安全 HTML、HTTP 和完整博客的职责边界。
+title: Web 与网络
+description: 用言枢、言访、言讯、言页与言标组成稳定 1.0 的服务端和客户端网络栈。
 ---
 
-言序 Web 栈以“言枢”作为应用入口，以内建子项目“言标”表达页面，并继续让`yanxu-html`和`yanxu-http`分别守住底层输出与协议边界。
-
-```sh
-yanbao add web --version '^0.2'
-```
+言序 Web 与网络栈已经进入稳定 1.0：言讯负责严格 HTTP/1.1 服务端协议，言访负责
+HTTP/HTTPS 客户端，言页负责默认安全的 HTML 构造，言枢把路由、中间件、言据、会话、
+CSRF、静态文件和测试传输组合成应用框架。言标继续作为言枢内建的自动转义模板语言。
 
 ```text
-yanxu-webblog    言枢配置 · 言标页面 · JSON/言据 · 静态文件
-      │
-      ▼
-言枢（yanxu-web）  应用 · 命名路由 · 中间件 · 测试客户端
-      │
-      ├── 言标      自动转义 · 条件/循环 · 包含/继承
-      ├── yanxu-html  安全节点 · 属性与 URL 规则
-      └── yanxu-http  HTTP/1.1 请求 · 响应 · Cookie
+                    ┌─ 言访 1.0：客户端 · 重试 · Mock · 回放
+应用与测试 ─────────┤
+                    └─ 言枢 1.0：路由 · 中间件 · 会话 · CSRF
+                              │
+                 ┌────────────┼────────────┐
+                 ▼            ▼            ▼
+          言讯 1.0       言页 1.0       言据 1.2
+        HTTP/1.1 协议    安全 HTML       数据交换
 ```
 
 <Cards>
-  <Card title="言枢" description="配置化应用、命名路由、反向 URL、中间件、错误与测试客户端" href="/ecosystem/web/framework/" />
-  <Card title="言标" description="内建的中文 HTML 超集：自动转义、控制流、包含与继承" href="/ecosystem/web/yanbiao/" />
-  <Card title="安全 HTML" description="底层节点、属性、URL 白名单和显式原始内容" href="/ecosystem/web/html/" />
-  <Card title="HTTP/1.1" description="严格且受预算约束的请求、响应与连接基础" href="/ecosystem/web/http/" />
-  <Card title="言枢博客" description="同时提供页面、JSON、言据和静态文件的完整参考项目" href="/ecosystem/web/webblog/" />
+  <Card title="言枢 1.0" description="路由、中间件、会话、CSRF、静态文件、OpenAPI 和无端口测试" href="/ecosystem/web/framework/" />
+  <Card title="言访 1.0" description="HTTP/HTTPS 客户端、正文、认证、重试、中间件、Mock 与回放" href="/ecosystem/web/request/" />
+  <Card title="言讯 1.0" description="严格 HTTP/1.1、keep-alive、分块、Multipart、Cookie 与升级边界" href="/ecosystem/web/http/" />
+  <Card title="言页 1.0" description="默认转义、保守 URL、资源预算、组件与增量渲染" href="/ecosystem/web/html/" />
+  <Card title="言标" description="自动转义的中文模板、控制流、包含与继承" href="/ecosystem/web/yanbiao/" />
+  <Card title="迁移到 1.0" description="从早期 Web 包升级稳定标签、导入名、安全边界和测试方式" href="/ecosystem/web/migration-1.0/" />
 </Cards>
+
+## 稳定版本
+
+| 仓库 | 包名 | 版本 | 最低言序 | 直接依赖 |
+| --- | --- | ---: | ---: | --- |
+| `yanxu-http` | `yanxu-http`（常用别名 `http`） | 1.0.0 | 1.1.6 | 无 |
+| `yanxu-request` | 言访（常用别名 `request`） | 1.0.0 | 1.1.11 | 言据、言韧、言录 |
+| `yanxu-html` | 言页 | 1.0.0 | 1.1.12 | 无 |
+| `yanxu-web` | `yanxu-web`（常用别名 `web`） | 1.0.0 | 1.1.12 | 言据、言页、言讯、言访 |
+
+安装稳定标签，而不是默认分支：
+
+```sh
+yanbao add http --version '^1.0'
+yanbao add request --version '^1.0'
+yanbao add html --package 言页 --version '^1.0'
+yanbao add web --version '^1.0'
+yanbao install
+```
 
 ## 如何选择
 
-| 目标 | 从哪里开始 |
+| 目标 | 使用 |
 | --- | --- |
-| 建立常规服务端 Web 项目 | 使用[言枢](/ecosystem/web/framework/)和[言标](/ecosystem/web/yanbiao/)。 |
-| 生成邮件、静态片段或底层 HTML 节点 | 直接使用[yanxu-html](/ecosystem/web/html/)。 |
-| 学习协议解析或自建服务器 | 直接使用[yanxu-http](/ecosystem/web/http/)。 |
-| 改造一个可运行项目 | 克隆[言枢博客](/ecosystem/web/webblog/)。 |
-| 从 0.1 升级 | 阅读[0.2 迁移指南](/ecosystem/web/migration-0.2/)。 |
+| 调用外部 HTTP/HTTPS 服务 | [言访](/ecosystem/web/request/) |
+| 编写服务端协议适配器或自建监听器 | [言讯](/ecosystem/web/http/) |
+| 构造邮件、静态片段或安全服务端 HTML | [言页](/ecosystem/web/html/) |
+| 构建有路由、中间件和应用安全边界的 Web 服务 | [言枢](/ecosystem/web/framework/) |
+| 在测试中让言访直接调用言枢而不监听端口 | 言枢的`言访测试`导出 |
 
-## 0.2 的重点
+言访和言讯没有循环依赖：客户端使用言序标准网络传输，服务端协议类型由言讯独立维护。
+言枢同时依赖两者，只在应用层提供无端口适配。
 
-言枢 0.2 新增集中配置、命名路由、反向 URL、路由组、自定义 404/405、JSON 正文、言标模板响应和无端口测试客户端。言标支持`{{ 路径 }}`自动转义插值、中文条件与循环、包含、模板继承、过滤器和显式可信 HTML。
+## 生产边界
 
-技术包标识和仓库仍为`yanxu-web`，源码建议使用：
+- 言讯只实现 HTTP/1.1 服务端协议，不终止 TLS，也不提供 HTTP/2、HTTP/3 或并发调度。
+- 言枢内建服务器用于开发与集成；生产环境应由成熟前置服务器终止 TLS 并实施限流。
+- 言访标准传输使用统一总超时和有界缓冲；细分超时、逐跳重定向控制等能力必须由
+  如实声明的自定义传输提供。
+- 言页的`原始`和`扩展`是显式信任升级，不是 HTML 清洗器。
+- 认证、授权、密钥管理、业务 Schema 和隐私留存仍由最终应用负责。
 
-```yanxu
-引「包:web」为 言枢；
-```
-
-## 推荐学习顺序
-
-1. [言枢框架](/ecosystem/web/framework/)：创建配置化应用与命名路由；
-2. [言标模板](/ecosystem/web/yanbiao/)：理解自动转义、控制流和继承；
-3. [安全 HTML](/ecosystem/web/html/)：理解更低层的节点与信任升级；
-4. [HTTP/1.1](/ecosystem/web/http/)：理解请求、响应和连接预算；
-5. [完整博客](/ecosystem/web/webblog/)：沿真实项目阅读所有层；
-6. [安全与路线图](/ecosystem/web/security-roadmap/)：确认生产边界。
-
-## 运行参考项目
-
-```sh
-git clone https://github.com/yanxulang/yanxu-web.git
-git clone https://github.com/yanxulang/yanxu-webblog.git
-yanbao install --manifest-path yanxu-web
-yanbao install --manifest-path yanxu-webblog
-```
-
-核心运行时本身仍不内置 Web 框架；这些能力以独立包演进。言包锁文件固定精确 Git 修订和内容校验，依赖包的宿主权限不会自动传递给应用。
+继续按任务阅读各库页面；完整 21 库目录见[第三方库](/ecosystem/libraries/)。

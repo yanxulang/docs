@@ -1,17 +1,20 @@
 {
   "title": "Web 与网络",
-  "description": "使用言枢、言标、安全 HTML 与 HTTP/1.1 构建言序网络应用。",
+  "description": "使用言枢、言访、言讯、言页与言标构建稳定的言序 Web 和 HTTP 应用。",
   "pages": [
     "index",
     "---框架与模板---",
     "framework",
     "yanbiao",
-    "migration-0.2",
+    "migration-1.0",
+    "request",
     "---基础类库---",
     "html",
     "http",
     "---完整示例---",
     "webblog",
-    "security-roadmap"
+    "security-roadmap",
+    "---历史迁移---",
+    "migration-0.2"
   ]
 }

@@ -1,15 +1,26 @@
 ---
-title: yanxu-http：HTTP/1.1 基础
-description: 解析有预算边界的 HTTP/1.1 请求，并构造状态、首部、Cookie 与多种正文响应。
+title: 言讯：HTTP/1.1 服务端协议
+description: 使用 yanxu-http 1.0 安全解析请求、管理持久连接，并构造 Cookie、分块与升级响应。
 ---
 
-[`yanxu-http`](https://github.com/yanxulang/yanxu-http)负责服务端协议对象与 TCP 单请求连接。它不提供路由或 HTML 清洗，因而可以独立用于协议测试、教学或其他框架。
+`yanxu-http` 1.0.0（常用别名`http`，本文称“言讯”）是严格 HTTP/1.1 服务端协议库。
+它负责请求解析、响应编码和连接状态，不负责路由、中间件、TLS 或应用并发。
+
+## 安装
+
+最低言序为 1.1.6：
 
 ```sh
-yanbao add http --version '^0.1'
+yanbao add http --version '^1.0'
+yanbao install
 ```
 
-## 解析请求
+```toml
+[依赖]
+http = { 包 = "yanxu-http", git = "https://github.com/yanxulang/yanxu-http.git", 修订 = "v1.0.0", 版 = "^1.0" }
+```
+
+## 离线解析与响应
 
 ```yanxu
 引「包:http」为 HTTP；
@@ -24,42 +35,71 @@ yanbao add http --version '^0.1'
 言 请求.路径；
 言 请求.查询全部（「q」）；
 言 请求.Cookie值（「theme」）；
-言 请求.正文文字（）；
-```
 
-`解析请求头`用于没有正文的请求；`解析请求`还会验证实际字节数与`Content-Length`完全一致。查询参数保留重复值，首部查询不区分大小写。
+定 响应 为 HTTP.JSON响应（{「ok」：真}）
+    .设首部（「cache-control」，「no-store」）
+    .添Cookie（HTTP.Cookie（「sid」，「opaque」）.设安全（真）.设同站（「Lax」））；
 
-## 严格的 0.1 模型
-
-| 项目 | 行为 |
-| --- | --- |
-| 版本 | 仅 HTTP/1.1，必须有非空`Host`。 |
-| 请求目标 | origin-form路径或`*`。 |
-| 首部 | UTF-8、严格 CRLF，不支持折叠。 |
-| 正文 | 仅单一合法`Content-Length`。 |
-| 默认预算 | 首部 64 KiB、正文 4 MiB、超时 5 秒。 |
-| 分块请求 | 出现`Transfer-Encoding`即明确拒绝。 |
-| 连接 | 每个连接一个请求，响应固定关闭。 |
-
-这个子集避免在未实现的协议细节上进行宽松猜测。它仍然只是开发与教学基线，不包含 TLS、并发工作池、持久连接、流式正文或可信代理模型。
-
-## 构造响应
-
-```yanxu
-定 响应 为 HTTP.JSON响应（{「ok」：真}）；
-响应.设首部（「cache-control」，「no-store」）；
-响应.添Cookie（
-    HTTP.Cookie（「sid」，「abc123」）.设安全（真）
-）；
 定 线上字节 为 响应.编码（）；
 ```
 
-响应工厂包括`字节响应`、`文字响应`、`HTML响应`、`JSON响应`、`言据响应`、`状态响应`、`响应字节`和`重定向响应`。编码器统一管理`Content-Length`、`Connection`和`Set-Cookie`，并拒绝首部值中的 NUL、CR、LF。
+首部名称按大小写不敏感处理，查询和表单保留重复值。响应编码器独占长度、分块、连接和
+`Set-Cookie`首部，并拒绝 NUL、CR、LF 注入。
 
-Cookie 默认`Path=/`、`HttpOnly`、`SameSite=Lax`。开发期`Secure`默认关闭，生产 HTTPS 会话必须显式打开；`SameSite=None`没有`Secure`时会失败。
+## 资源预算
 
-## 言据的边界
+```yanxu
+定 限制 为 HTTP.限制（）
+    .设读取（3000，4096，32768，1048576）
+    .设首部项（64，8192，32）
+    .设分块（512，1024）
+    .设Multipart为（32，4096）
+    .设会话（50）
+    .验证（）；
+```
 
-`言据响应`接收已经序列化的文字。先调用`yanju`的`言据.序列化（值）`，再交给 HTTP 层设置`application/vnd.yanxu.yanju; charset=utf-8`。这样数据格式实现不会复制进协议库。
+限制覆盖读取超时、请求行、首部区、单首部、正文、分块、尾部、Multipart 和单连接
+请求数。冲突`Content-Length`、同时出现长度与传输编码、模糊编码、非法 Host 和走私形状
+都会在应用处理器之前失败。
 
-全部公开对象、错误类别与单次 TCP 示例见[`yanxu-http/docs`](https://github.com/yanxulang/yanxu-http/tree/main/docs)。要把请求交给配置、路由、中间件和言标页面，继续阅读[言枢](/ecosystem/web/framework/)。
+## 持久连接
+
+```yanxu
+定 会话 为 HTTP.连接会话为（连接，限制）；
+
+试 则
+    当 真 则
+        定 请求 为 会话.读取下一请求（）；
+        若 （请求 是 空） 则 断；终
+        会话.发送响应（请求，HTTP.JSON响应（{「path」：请求.路径}））；
+        若 非 会话.可复用（） 则 断；终
+    终
+救 所误 则
+    言 HTTP.错误详情（所误）【「代码」】；
+终
+
+会话.关闭（）；
+```
+
+会话顺序处理 keep-alive 和流水线请求，保留超前读取字节，并支持临时 1xx、定长或分块
+响应。达到预算、请求或响应要求关闭、对端结束时不再复用。
+
+## 表单、Cookie 与升级
+
+- URL 编码表单把名称映射到值列。
+- Multipart 保留项顺序、重复字段、首部与文件字节，不自动落盘。
+- Cookie 支持`__Host-`、`__Secure-`、SameSite、Partitioned 和删除语义。
+- WebSocket 边界验证 RFC 6455 版本 13、Origin 与子协议，并移交套接字和已缓冲字节。
+- 升级通道不解析 WebSocket 帧、扩展、压缩或关闭握手。
+
+## 权限、错误与限制
+
+库清单只声明回环 TCP 监听；部署应用必须在自己的清单授权实际地址。库不申请文件、
+出站网络、UDP、环境、进程或原生扩展权限。
+
+稳定错误使用`YANXUN_*`代码，可通过`HTTP.错误详情`读取。1.0 不实现 TLS、HTTP/2、
+HTTP/3、可信代理、并发调度、速率限制或应用背压；Multipart 是有界内存解析器。
+
+仓库与完整协议文档：[yanxulang/yanxu-http](https://github.com/yanxulang/yanxu-http)，
+[1.0.0 Release](https://github.com/yanxulang/yanxu-http/releases/tag/v1.0.0)。需要路由和
+中间件时继续阅读[言枢](/ecosystem/web/framework/)。
