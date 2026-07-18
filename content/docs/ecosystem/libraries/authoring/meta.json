@@ -1,0 +1,12 @@
+{
+  "title": "第三方库编写指南",
+  "description": "从选题、格式 2 清单和稳定 API，到测试、发布与安全验收。",
+  "pages": [
+    "index",
+    "project-structure",
+    "api-design",
+    "testing-ci",
+    "publishing",
+    "requirements"
+  ]
+}

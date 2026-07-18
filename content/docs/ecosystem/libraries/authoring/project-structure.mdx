@@ -1,0 +1,185 @@
+---
+title: 项目结构与清单
+description: 创建格式 2 包工程，组织源码与验证资产，并锁定依赖和最小权限。
+---
+
+## 创建工程
+
+```sh
+yanbao 新 yanxu-example --name 言例
+yanbao 查 --manifest-path yanxu-example
+```
+
+当前言包会创建`src/主.yx`、格式 2 的`言序.toml`和`言序.lock`。如果你从旧模板或手工工程
+开始，应主动把清单迁到格式 2；不要依赖格式 1 的兼容解析继续发布新版本。
+
+## 建议目录
+
+```text
+yanxu-example/
+├── .github/workflows/ci.yml
+├── api/api-v1.json
+├── benchmarks/典型负载.yx
+├── docs/
+│   ├── API.md
+│   ├── ARCHITECTURE.md
+│   ├── ERRORS.md
+│   ├── GUIDE.md
+│   ├── MIGRATION.md
+│   ├── PERFORMANCE.md
+│   └── SECURITY_MODEL.md
+├── examples/五分钟示例.yx
+├── integration/消费者/
+│   ├── src/主.yx
+│   ├── 言序.lock
+│   └── 言序.toml
+├── src/
+│   ├── 主.yx
+│   └── 内核.yx
+├── tests/正常与边界.yx
+├── CHANGELOG.md
+├── COMPATIBILITY.md
+├── CONTRIBUTING.md
+├── LICENSE
+├── README.md
+├── SECURITY.md
+├── 言序.lock
+└── 言序.toml
+```
+
+小库不必制造空目录，但发布时至少应有源码、规格、可执行示例、README、许可、更新记录、
+兼容策略、安全报告方式和贡献说明。基准要验证结果而不只是打印耗时；独立消费者必须通过
+`包:<名称>`导入，不能用`../src`绕过包边界。
+
+## 格式 2 清单
+
+下面是面向言序 1.1.12 稳定生态的纯言序库模板。`言序`字段应写实际通过 CI 的最低版本，
+而不是开发机上的版本；没有用到的权限保持拒绝。
+
+```toml
+[包]
+格式 = 2
+名称 = "言例"
+版本 = "0.1.0"
+言序 = ">=1.1.12"
+入口 = "src/主.yx"
+说明 = "受资源约束的示例能力"
+许可 = "MIT"
+作者 = ["维护者名称"]
+
+[依赖]
+
+[开发依赖]
+
+[权限]
+文件 = []
+网络 = []
+TCP监听 = []
+UDP绑定 = []
+环境 = []
+进程 = false
+原生扩展 = false
+图形界面 = false
+剪贴板 = false
+文件对话框 = false
+系统通知 = false
+托盘 = false
+打开外部地址 = false
+全局快捷键 = false
+
+[导出]
+默认 = "src/主.yx"
+
+[构建]
+目标 = "字节码"
+```
+
+这是言序 1.1.12 的完整权限面。较新工具链会在新项目中额外生成`本地网络 = false`；该能力
+从 1.1.15 起可用。若把它设为`true`，必须把最低言序提升到 1.1.15 或更高并增加对应 CI；
+面向 1.1.12 的清单应删除该键。
+
+入口和导出必须是包内相对`.yx`文卷，不能包含`..`或绝对路径。若库需要随包分发静态资源，
+显式增加资源目录：
+
+```toml
+[资源]
+目录 = ["assets"]
+```
+
+资源声明决定包内容，文件权限决定运行时能访问什么；两者不能互相替代。
+
+## 依赖来源与锁
+
+本地开发可以使用路径依赖：
+
+```sh
+yanbao 加 言版 --manifest-path yanxu-example \
+  --path ../yanxu-semver --version '^1.0'
+```
+
+提交发布候选前，把路径来源换成不可移动的公开标签和兼容范围：
+
+```sh
+yanbao 加 言版 --manifest-path yanxu-example \
+  --git https://github.com/yanxulang/yanxu-semver.git \
+  --rev v1.0.0 --version '^1.0'
+yanbao 装 --manifest-path yanxu-example
+yanbao 装 --manifest-path yanxu-example --offline
+yanbao 树 --manifest-path yanxu-example --offline
+```
+
+对应清单是：
+
+```toml
+[依赖]
+言版 = { git = "https://github.com/yanxulang/yanxu-semver.git", 修订 = "v1.0.0", 版 = "^1.0" }
+```
+
+`版`表达允许的 SemVer 范围，`修订`固定本次解析来源；`言序.lock`再记录精确提交、内容
+SHA-256、入口、传递依赖、生成器和目标。三层都要保留。不要以`main`、`HEAD`或本地路径
+作为稳定 Release 的来源，也不要手工修改锁文件来掩盖解析差异。
+
+库仓库同样提交锁文件。依赖或清单变化时用`yanbao 更`显式重锁，审查差异后测试；正常
+安装用`yanbao 装`，不会把无意更新伪装成安装。需要最低运行时直接复核时可执行：
+
+```sh
+/path/to/yanxu-1.1.12 包 锁 yanxu-example
+/path/to/yanxu-1.1.12 包 锁 --离线 yanxu-example
+```
+
+不同目标的原生锁可以有目标与制品字段差异，但版本、修订、内容校验和和依赖边必须一致。
+
+## 权限最小化
+
+第三方依赖不会替顶层应用取得宿主能力。库清单只声明库自身确实需要的能力，消费者还要
+显式授权。常见决策如下：
+
+| 需要 | 清单写法 | 收紧方法 |
+| --- | --- | --- |
+| 读取固定目录 | `文件 = ["assets"]` | 不使用`.`或用户主目录 |
+| 访问服务 | `网络 = ["api.example.com:443"]` | 固定主机和端口，不用`"*"` |
+| 访问回环服务（言序 1.1.15+） | `本地网络 = true` | 提高最低言序，与公网授权分开评审 |
+| 读取配置变量 | `环境 = ["EXAMPLE_TOKEN"]` | 只列实际变量名且默认脱敏 |
+| 启动子进程 | `进程 = true` | 记录可执行文件来源和参数边界 |
+| 加载动态库 | `原生扩展 = true` | 固定 ABI、目标、大小和摘要 |
+
+纯计算库通常所有权限都应为空或`false`。新增权限属于安全面变化：先更新威胁模型、消费者
+示例和兼容说明，再决定是否需要新的次版本或主版本。
+
+## 原生扩展清单
+
+原生库应使用当前稳定 ABI v2，并为每个真正发布的目标登记唯一制品：
+
+```toml
+[原生]
+ABI = 2
+
+[原生.linux.x86_64]
+文件 = "dist/x86_64-unknown-linux-gnu/libyanxu_example_native.so"
+校验和 = "64位十六进制SHA-256"
+大小 = 123456
+```
+
+实际清单中的校验和必须是 64 位十六进制值，大小必须与文件逐字节一致。不要复制示例值，
+也不要为没有构建和执行验证的目标添加条目。完整的跨平台和 ABI 门禁见
+[测试与持续集成](/ecosystem/libraries/authoring/testing-ci/)。

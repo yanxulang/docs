@@ -1,0 +1,188 @@
+---
+title: 测试与持续集成
+description: 用规格、双执行器、独立消费者、最低工具链和真实平台证明发布声明。
+---
+
+测试目标不是“命令退出为零”，而是证明公开契约、失败策略、权限边界和发布制品在使用者
+环境中成立。每一项支持声明都要能指向一条覆盖范围相同的门禁。
+
+## 六层验证资产
+
+| 层级 | 必须证明什么 |
+| --- | --- |
+| 规格 | 正常、边界、非法输入、资源上限、状态转换和稳定错误代码 |
+| 示例 | README 中的主要工作流可执行，输出和退出状态可断言 |
+| 基准 | 典型与最坏负载有固定规模、结果校验和环境说明 |
+| API 漂移 | 源码公开声明与提交的 Markdown、JSON 清单一致 |
+| 独立消费者 | 只通过标签/锁和`包:<名称>`导入完成真实任务 |
+| Release 制品 | release YXB 或原生制品可在声称的平台实际加载和执行 |
+
+不要用同一份测试重复运行的次数冒充不同层。特别是，库仓库内相对导入成功不能替代独立
+消费者，交叉编译成功不能替代目标平台加载，Mock 不能替代你声称支持的真实服务版本。
+
+## 本地质量门禁
+
+在项目根目录运行当前言包工作流：
+
+```sh
+yanbao 装
+yanbao 查
+yanbao 试 --json
+yanbao 构 --release -o build/言例.yxb
+yanbao 审 --deny-level high
+yanbao 装 --offline
+```
+
+再用核心命令检查每份言序文卷、VM 路径与 API 漂移：
+
+```sh
+find src tests examples benchmarks integration -type f -name '*.yx' -print | \
+  while IFS= read -r file; do
+    yanxu 格 "$file" | cmp - "$file"
+    yanxu 查 "$file"
+  done
+
+yanxu 试 tests --json
+for file in tests/*.yx; do yanxu 字节 "$file"; done
+for file in examples/*.yx; do
+  yanxu "$file"
+  yanxu 字节 "$file"
+done
+
+yanxu 文 src/主.yx /tmp/言例-API.md
+yanxu 文 --json src/主.yx /tmp/言例-api-v1.json
+cmp docs/API.md /tmp/言例-API.md
+cmp api/api-v1.json /tmp/言例-api-v1.json
+
+yanxu 编 . --release -o /tmp/言例-release.yxb
+test -s /tmp/言例-release.yxb
+```
+
+命令中的目录应只包含实际存在的验证资产；若项目没有某一类，先决定为何不需要，并把理由
+写入兼容或性能文档。不要以删除测试目录来让门禁变绿。
+
+纯言序库还应让示例和关键消费者分别经树解释器、字节码 VM 与 Release YXB 执行，并比较
+可观察结果。依赖`标准:原生`的库不能由树解释器加载，应逐份使用`yanxu 字节`，再运行同一
+消费者的 YXB；文档要明确这一限制。
+
+## 最低版本不是一行清单
+
+`言序 = ">=1.1.12"`表示 1.1.12 真能解析、锁定、检查、执行和构建该包。当前言包可能要求
+更新的本机言序，因此最低版本作业直接使用固定的核心可执行文件：
+
+```sh
+YANXU=/opt/yanxu-1.1.12/bin/yanxu
+
+"$YANXU" 版本 --json
+"$YANXU" 包 .
+"$YANXU" 包 锁 --离线 .
+"$YANXU" 查 src/主.yx
+"$YANXU" 试 tests --json
+for file in tests/*.yx; do "$YANXU" 字节 "$file"; done
+"$YANXU" 编 . --release -o /tmp/言例-1.1.12.yxb
+test -s /tmp/言例-1.1.12.yxb
+```
+
+CI 同时运行“声明的最低版本”和“当前稳定版本”。如果最低版本不能通过，就修复兼容性或
+提高清单下限；不能只在文档中保留较低数字。锁文件由哪一版生成应是明确策略，最终仓库
+必须在该策略下重建收敛。
+
+## CI 基线
+
+每个 PR、默认分支和正式`v*`标签都应触发质量工作流。至少设置：
+
+- 仓库只读的默认`permissions`，只在确需上传制品或签署证明的作业单独提权；
+- 固定提交的第三方 Action 和固定版本工具链；
+- 格式、静态检查、API 漂移、规格、VM、示例、基准、锁和 release 构建；
+- Linux、macOS、Windows 中所有声称支持的平台；
+- 标签作业复用与主分支相同的门禁，不另设较弱路径；
+- 失败即停止发布，制品缺失也视为失败；
+- 不把令牌、数据库地址、证书、用户路径或完整不可信输入写入日志和制品。
+
+服务型库应在隔离服务中测试已声明的最低与最高版本，覆盖认证失败、TLS、超时、断连、
+资源上限和清理。测试结束后验证临时数据库对象、文件、端口和进程均已释放。
+
+## 跨平台与原生 ABI
+
+发布原生扩展时，先确认运行时的 ABI 能力：
+
+```sh
+yanxu 原生 --json
+```
+
+稳定生态使用 ABI v2。对清单中每个`[原生.<系统>.<架构>]`条目，CI 必须在对应原生 runner
+完成以下验证：
+
+1. 用固定原生工具链执行格式、单元测试、严格 lint 和 release 构建；
+2. 核对制品的操作系统格式、CPU 架构、字节大小与 SHA-256；
+3. 核对导出符号`yanxu_native_module_v2`，拒绝错误 ABI 或其他架构；
+4. 让言序 VM 从源码消费者实际加载，再让同一消费者从 release YXB 加载；
+5. 在真实依赖服务或真实窗口环境运行最小冒烟，而不只检查文件存在；
+6. 保存逐目标制品和清单，最后汇总时再次逐项核对。
+
+若使用 Rust 后端，常见质量命令是：
+
+```sh
+cargo fmt --all -- --check
+cargo test --workspace --locked
+cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+cargo build --workspace --release --locked
+```
+
+macOS 还要检查 dylib 安装名、架构和实际签名状态；Windows 检查 PE 架构与 CRT 分发策略；
+Linux 检查 ELF 架构、动态依赖和 glibc 最低符号版本。临时签名不是 Developer ID 签名，
+交叉构建不是原生执行，能在某个发行版运行也不能证明更低 glibc。Release 说明必须如实写出
+这些边界。
+
+只发布你真正验证的目标。缺少当前目标制品时应明确失败，不能静默加载相近架构或其他操作
+系统的动态库。
+
+## 全新克隆验收
+
+发布候选通过后，在独立目录和空缓存中从公开标签重新开始：
+
+```sh
+REPO=https://github.com/example/yanxu-example.git
+TAG=v1.0.0
+CLONE="$(mktemp -d)/yanxu-example"
+CACHE="$(mktemp -d)"
+
+git clone --branch "$TAG" --depth 1 "$REPO" "$CLONE"
+YANXU_CACHE="$CACHE" yanbao 装 --manifest-path "$CLONE"
+YANXU_CACHE="$CACHE" yanbao 装 --manifest-path "$CLONE" --offline
+YANXU_CACHE="$CACHE" yanbao 查 --manifest-path "$CLONE"
+YANXU_CACHE="$CACHE" yanbao 试 --manifest-path "$CLONE" --json
+YANXU_CACHE="$CACHE" yanbao 构 --manifest-path "$CLONE" \
+  --release -o /tmp/言例-克隆.yxb
+test -z "$(git -C "$CLONE" status --short)"
+```
+
+全新克隆应固定到附注标签指向的提交。在线安装后离线安装必须成功，生成结果不能改写受跟踪
+文件。若锁包含目标特定原生字段，应在各目标分别验证，并只按书面规则比较允许变化的字段。
+版本、修订、内容摘要或依赖边差异永远不能被“规范化”掉。
+
+## 独立消费者验收
+
+再创建不位于库仓库内的应用，只使用公开来源：
+
+```sh
+CONSUMER="$(mktemp -d)/consumer"
+yanbao 新 "$CONSUMER" --name 言例消费者
+yanbao 加 言例 --manifest-path "$CONSUMER" \
+  --git https://github.com/example/yanxu-example.git \
+  --rev v1.0.0 --version '^1.0'
+yanbao 装 --manifest-path "$CONSUMER" --offline
+yanbao 行 --manifest-path "$CONSUMER"
+yanbao 构 --manifest-path "$CONSUMER" --release -o /tmp/言例消费者.yxb
+yanxu 行 /tmp/言例消费者.yxb
+```
+
+消费者入口要断言公共返回值和稳定错误代码，并显式声明所需权限。原生、数据库、网络、GUI
+或文件库要分别覆盖成功和拒绝权限路径。源码与 YXB 的可观察结果必须一致。
+
+## 安全验收
+
+发布门禁还应证明：依赖来源和 Action 已固定；许可证兼容；仓库历史与制品没有凭据；日志
+已脱敏；路径、URL、SQL、HTML 和命令参数有负面测试；压缩包拒绝路径穿越、特殊文件和异常
+大小；原生文件的摘要在下载后重新计算。`yanbao 审`是其中一层，不替代威胁模型、代码审查
+和真实消费者。
