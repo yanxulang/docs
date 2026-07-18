@@ -1,110 +1,130 @@
 ---
 title: 安装与更新
-description: 使用言包安装第三方库、声明中文包名、管理锁文件并授权能力。
+description: 使用言包锁定 21 个稳定库的公开标签、审阅依赖图并配置最小宿主权限。
 ---
 
-## 准备环境
+## 确认工具链
 
-这些库要求言序 1.1.6 或更高版本。先确认言序与言包可用：
-
-```sh
-yanxu --version
-yanbao --version
-yanbao doctor
-```
-
-如果尚未安装言包，请先阅读[言包工程工具](/tooling/package-manager/)。
-
-## 使用短仓库名安装
-
-仓库名使用英文短名，清单中的包名使用中文，因此安装时通过 `--package` 明确中文包名：
+全部库可在言序 1.1.12 上共同使用；单库最低版本见[库目录](/ecosystem/libraries/)。
 
 ```sh
-yanbao add markdown --package 言章 --version "^0.1"
-yanbao add jwt --package 言签 --version "^0.1"
-yanbao add collections --package 言容 --version "^0.1"
-yanbao add cli --package 言令 --version "^0.1"
-yanbao add semver --package 言版 --version "^0.1"
-yanbao add retry --package 言韧 --version "^0.1"
-yanbao add datetime --package 言时 --version "^0.1"
-yanbao add validate --package 言验 --version "^0.1"
-yanbao add log --package 言录 --version "^0.1"
-yanbao add db --package 言库 --version "^0.1"
-yanbao add sqlite --package 言舟 --version "^0.1"
-yanbao add orm --package 言映 --version "^0.1"
-yanbao add test --package 言试 --version "^0.1" --dev
+yanxu 版本 --json
+yanbao 版
+yanbao 诊
 ```
 
-`markdown` 会映射到 `yanxulang/yanxu-markdown`，其他短名同理。言试通常只用于测试，因此示例把它写入 `[开发依赖]`。
+## 添加稳定依赖
 
-## 直接编辑清单
+言包短名默认映射到`yanxulang/yanxu-<短名>`。言据仓库名例外，使用组织/仓库写法。
 
-也可以手动写入 Git 来源：
+```sh
+yanbao add yanxulang/yanju --package 言据 --version '^1.2'
+yanbao add semver --package 言版 --version '^1.0'
+yanbao add collections --package 言容 --version '^1.0'
+yanbao add datetime --package 言时 --version '^1.0'
+yanbao add validate --package 言验 --version '^1.0'
+yanbao add log --package 言录 --version '^1.0'
+yanbao add retry --package 言韧 --version '^1.0'
+yanbao add cli --package 言令 --version '^1.0'
+yanbao add http --version '^1.0'
+yanbao add request --version '^1.0'
+yanbao add jwt --package 言签 --version '^1.0'
+yanbao add db --package 言库 --version '^1.0'
+yanbao add sqlite --package 言舟 --version '^1.0'
+yanbao add postgres --package 言库象城 --version '^1.0'
+yanbao add mysql --package 言库海豚 --version '^1.0'
+yanbao add orm --package 言映 --version '^1.0'
+yanbao add html --package 言页 --version '^1.0'
+yanbao add markdown --package 言章 --version '^1.0'
+yanbao add web --version '^1.0'
+yanbao add test --package 言试 --version '^1.0' --dev
+```
+
+每条命令都会更新格式 2 清单并重解完整图。应用通常只添加需要的顶层库，不应一次复制
+全部命令。
+
+## 手工固定 Git 标签
+
+审计要求明确来源时直接写清单：
 
 ```toml
 [依赖]
-言验 = { git = "https://github.com/yanxulang/yanxu-validate.git", 修订 = "main", 版 = "^0.1" }
-言录 = { git = "https://github.com/yanxulang/yanxu-log.git", 修订 = "main", 版 = "^0.1" }
+言据 = { git = "https://github.com/yanxulang/yanju.git", 修订 = "v1.2.0", 版 = "^1.2" }
+言库 = { git = "https://github.com/yanxulang/yanxu-db.git", 修订 = "v1.0.0", 版 = "^1.0" }
+言映 = { git = "https://github.com/yanxulang/yanxu-orm.git", 修订 = "v1.0.0", 版 = "^1.0" }
 
 [开发依赖]
-言试 = { git = "https://github.com/yanxulang/yanxu-test.git", 修订 = "main", 版 = "^0.1" }
+言试 = { git = "https://github.com/yanxulang/yanxu-test.git", 修订 = "v1.0.0", 版 = "^1.0" }
 ```
 
-编辑后生成或验证完整锁图：
+不要把`main`当成稳定修订。版本范围决定允许升级的兼容线，标签/提交和内容校验由锁文件
+固定。
+
+## 生成、解释和验证锁
 
 ```sh
 yanbao install
 yanbao tree
+yanbao why 言库
 yanbao check
 yanbao test
+yanbao audit
 ```
 
-格式 2 的 `言序.lock` 会固定版本、Git 提交、内容校验、目标和传递依赖。应用仓库应提交锁文件；库仓库也应保留锁文件用于可重复 CI。
+应用和库仓库都应提交`言序.lock`。CI 还应执行离线恢复，证明没有依赖开发缓存或可变网络
+状态。不要手工编辑锁中的提交、校验和、目标或原生制品。
 
-## 导入包
-
-导入名与清单中文包名一致：
-
-```yanxu
-引「包:言验」为 言验；
-引「包:言时」为 言时；
-引「包:言录」为 言录；
-```
-
-不要使用仓库短名作为模块名，例如 `包:validate` 不是言验的公开入口。
-
-## 更新、解释与移除
+## 更新
 
 ```sh
 yanbao outdated
 yanbao update --dry-run
 yanbao update
-yanbao why 言库
-yanbao remove orm
+yanbao check
+yanbao test
+yanbao build --release
 yanbao audit
 ```
 
-先用 `update --dry-run` 检查将要变化的提交与版本，再执行正式更新并运行项目测试。`why` 可解释言库是直接依赖，还是由言舟或言映传递引入。
+先审阅 dry-run 的版本和来源，再正式更新。主版本变化必须同时阅读 CHANGELOG、迁移、权限
+和兼容说明。
 
-## 权限不会传递
+## 言窗的发布制品
 
-依赖不能替顶层应用取得权限。根据实际用法在应用的 `言序.toml` 中授权：
+言窗 Git 标签只保存源码与清单模板；可执行的六目标清单和动态库位于 1.0.0 GitHub
+Release 归档。普通 GUI 模板使用：
 
-| 能力 | 需要授权的情况 | 建议 |
+```sh
+yanbao new 我的窗口 --gui
+```
+
+离线或审计环境应先校验并展开官方六目标归档，再显式提供完整包：
+
+```sh
+yanbao new 我的窗口 --gui --gui-path /已验证/yanxu-gui
+```
+
+详情见[言窗 1.0](/ecosystem/desktop/gui/)。
+
+## 权限由应用决定
+
+| 能力 | 典型库 | 应用责任 |
 | --- | --- | --- |
-| 文件 | 言录写日志；言试保存快照或临时文件；言舟打开数据库文件 | 只授权实际目录或文件 |
-| 进程 | 言舟使用默认 `sqlite3` CLI 后端 | 设置 `进程 = true`，生产环境固定可执行文件来源 |
-| 环境 | 言试的 `隔离系统环境` 读取真实变量 | 只列出测试需要的变量名 |
-| 网络 | 应用选择 PostgreSQL/MySQL 网络驱动 | 由驱动和顶层应用声明目标，不由言库申请 |
+| 文件 | 言据文件、言录文件、SQLite、言试快照、言访上传下载 | 只授权实际文件根 |
+| 出站网络 | 言访、PostgreSQL、MySQL/MariaDB | 只授权目标主机与端口，不记录完整凭据 |
+| TCP 监听 | 言讯、言枢开发服务器 | 开发只用回环；生产明确实际地址 |
+| 进程 | 言舟可选 CLI 兼容后端 | 原生 SQLite 不需要；CLI 后端显式开启 |
+| 原生扩展 | 三个数据库驱动 | 锁定目标、ABI、大小与摘要 |
+| GUI/剪贴板/对话框 | 言窗 | 三项独立授权，不互相隐式包含 |
 
-纯计算库本身不需要额外权限。即使依赖清单中展示了开发仓库使用的文件范围，最终能力仍以顶层应用清单为准。
+依赖权限不会传给顶层应用。即使库的测试清单允许某项能力，消费者也必须在自己的清单中
+重新作出最小授权。
 
 ## 本地联调
 
-修改两个相邻仓库时可以临时使用路径依赖：
-
 ```sh
-yanbao add datetime --package 言时 --path ../yanxu-datetime --version "^0.1"
+yanbao add datetime --package 言时 --path ../yanxu-datetime --version '^1.0'
 ```
 
-提交发布前应换回 Git 来源、更新锁文件并重新运行 `yanbao check`、`yanbao test` 与 `yanbao audit`，避免把开发机路径带入发布清单。
+路径依赖只用于本地开发。发布前换回 Git 标签、更新锁、检查不存在`path:`来源，并从全新
+克隆执行检查、测试、示例、release 构建和消费者验收。
