@@ -1,13 +1,16 @@
 {
   "title": "第三方包",
-  "description": "言序社区维护的现代工程库、数据栈与测试工具。",
+  "description": "21 个稳定工程库、数据库与 ORM、网络测试工具和第三方库发布规范。",
   "defaultOpen": true,
   "pages": [
     "index",
     "installation",
     "composition",
+    "authoring",
+    "---内容与安全---",
     "markdown",
     "jwt",
+    "---基础工具---",
     "collections",
     "cli",
     "semver",
@@ -15,9 +18,13 @@
     "datetime",
     "validate",
     "log",
+    "---数据库---",
     "db",
     "sqlite",
+    "postgres",
+    "mysql",
     "orm",
+    "---测试---",
     "test"
   ]
 }

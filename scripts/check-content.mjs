@@ -94,4 +94,76 @@ assert.equal(packageJson.version, '1.1.8');
 assert.match(read('content/docs/standard-library/index.mdx'), /25 个标准模块/);
 assert.match(read('app/layout.tsx'), /metadataBase:\s*new URL\('https:\/\/docs\.yanxu\.dev\/'\)/);
 
+const stableLibraries = [
+  ['yanju', '1.2.0', '1.1.6', 'content/docs/ecosystem/yanju/index.mdx', '/ecosystem/yanju/'],
+  ['yanxu-semver', '1.0.0', '1.1.6', 'content/docs/ecosystem/libraries/semver.mdx', '/ecosystem/libraries/semver/'],
+  ['yanxu-collections', '1.0.0', '1.1.6', 'content/docs/ecosystem/libraries/collections.mdx', '/ecosystem/libraries/collections/'],
+  ['yanxu-datetime', '1.0.0', '1.1.6', 'content/docs/ecosystem/libraries/datetime.mdx', '/ecosystem/libraries/datetime/'],
+  ['yanxu-validate', '1.0.0', '1.1.6', 'content/docs/ecosystem/libraries/validate.mdx', '/ecosystem/libraries/validate/'],
+  ['yanxu-log', '1.0.0', '1.1.6', 'content/docs/ecosystem/libraries/log.mdx', '/ecosystem/libraries/log/'],
+  ['yanxu-retry', '1.0.0', '1.1.6', 'content/docs/ecosystem/libraries/retry.mdx', '/ecosystem/libraries/retry/'],
+  ['yanxu-cli', '1.0.0', '1.1.6', 'content/docs/ecosystem/libraries/cli.mdx', '/ecosystem/libraries/cli/'],
+  ['yanxu-http', '1.0.0', '1.1.6', 'content/docs/ecosystem/web/http.mdx', '/ecosystem/web/http/'],
+  ['yanxu-request', '1.0.0', '1.1.11', 'content/docs/ecosystem/web/request.mdx', '/ecosystem/web/request/'],
+  ['yanxu-jwt', '1.0.0', '1.1.6', 'content/docs/ecosystem/libraries/jwt.mdx', '/ecosystem/libraries/jwt/'],
+  ['yanxu-db', '1.0.0', '1.1.11', 'content/docs/ecosystem/libraries/db.mdx', '/ecosystem/libraries/db/'],
+  ['yanxu-sqlite', '1.0.0', '1.1.12', 'content/docs/ecosystem/libraries/sqlite.mdx', '/ecosystem/libraries/sqlite/'],
+  ['yanxu-postgres', '1.0.0', '1.1.12', 'content/docs/ecosystem/libraries/postgres.mdx', '/ecosystem/libraries/postgres/'],
+  ['yanxu-mysql', '1.0.0', '1.1.12', 'content/docs/ecosystem/libraries/mysql.mdx', '/ecosystem/libraries/mysql/'],
+  ['yanxu-orm', '1.0.0', '1.1.12', 'content/docs/ecosystem/libraries/orm.mdx', '/ecosystem/libraries/orm/'],
+  ['yanxu-html', '1.0.0', '1.1.12', 'content/docs/ecosystem/web/html.mdx', '/ecosystem/web/html/'],
+  ['yanxu-markdown', '1.0.1', '1.1.12', 'content/docs/ecosystem/libraries/markdown.mdx', '/ecosystem/libraries/markdown/'],
+  ['yanxu-web', '1.0.0', '1.1.12', 'content/docs/ecosystem/web/framework.mdx', '/ecosystem/web/framework/'],
+  ['yanxu-test', '1.0.0', '1.1.12', 'content/docs/ecosystem/libraries/test.mdx', '/ecosystem/libraries/test/'],
+  ['yanxu-gui', '1.0.0', '1.1.12', 'content/docs/ecosystem/desktop/gui.mdx', '/ecosystem/desktop/gui/'],
+];
+
+const libraryCatalog = read('content/docs/ecosystem/libraries/index.mdx');
+assert.match(libraryCatalog, /组织维护 21 个独立稳定库/);
+for (const [repository, version, minimumYanxu, page, route] of stableLibraries) {
+  const row = libraryCatalog.split('\n').find((line) => line.includes(`\`${repository}\``));
+  assert.ok(row, `第三方库目录缺少 ${repository}`);
+  assert.ok(row.includes(`| ${version} | ${minimumYanxu} |`),
+    `${repository} 的稳定版本或最低言序不正确`);
+  assert.ok(row.includes(`](${route})`), `${repository} 缺少稳定文档入口 ${route}`);
+
+  const markdown = read(page);
+  assert.ok(markdown.includes(version), `${page} 缺少稳定版本 ${version}`);
+  assert.ok(markdown.includes(minimumYanxu), `${page} 缺少最低言序 ${minimumYanxu}`);
+  assert.ok(markdown.includes(`https://github.com/yanxulang/${repository}`), `${page} 缺少仓库链接`);
+  assert.ok(markdown.includes(`/releases/tag/v${version}`), `${page} 缺少稳定 Release 链接`);
+  assert.ok(!/\^0\.[12]\b/u.test(markdown), `${page} 仍使用 0.x 依赖范围`);
+  assert.ok(!/(?:修订\s*=\s*["']|--rev\s+)(?:main|HEAD)\b/iu.test(markdown),
+    `${page} 仍把可变分支写成稳定来源`);
+}
+
+const libraryMeta = JSON.parse(read('content/docs/ecosystem/libraries/meta.json'));
+for (const page of ['authoring', 'postgres', 'mysql']) {
+  assert.ok(libraryMeta.pages.includes(page), `第三方库导航缺少 ${page}`);
+}
+
+const expectedAuthoringPages = [
+  'index', 'project-structure', 'api-design', 'testing-ci', 'publishing', 'requirements',
+];
+const authoringMeta = JSON.parse(read('content/docs/ecosystem/libraries/authoring/meta.json'));
+assert.deepEqual(authoringMeta.pages, expectedAuthoringPages, '第三方库编写指南导航不完整');
+const authoring = expectedAuthoringPages
+  .map((page) => read(`content/docs/ecosystem/libraries/authoring/${page}.mdx`))
+  .join('\n');
+for (const requirement of [
+  '言序.toml', '格式 2', '结构化错误', '资源预算', '测试', 'CI', 'SemVer',
+  '普通 merge', '附注标签', 'GitHub Release', '权限', 'SECURITY.md', '全新克隆',
+]) {
+  assert.ok(authoring.includes(requirement), `第三方库编写指南缺少 ${requirement}`);
+}
+assert.match(read('content/docs/ecosystem/libraries/authoring/publishing.mdx'),
+  /没有把包直接发布到远端的`publish`命令/);
+for (const page of [
+  'content/docs/projects/dependencies.mdx',
+  'content/docs/tooling/package-manager.mdx',
+]) {
+  assert.ok(!/yanbao add (?:http|html|web).*\^0\.[12]/u.test(read(page)),
+    `${page} 仍推荐目标库的旧版安装范围`);
+}
+
 console.log(`内容检查通过：${files.length} 个文档页面。`);

@@ -1,55 +1,41 @@
 ---
-title: 言据
-description: 言序生态的统一配置与数据交换格式，以及它的纯言序标准库。
+title: 言据 1.2
+description: 使用言序生态的规范数据格式完成受限解析、校验、路径、补丁、流、HTTP 与数据库交换。
 ---
 
-言据（YanJu）是言序生态的配置与数据交换格式，文件扩展名为`.yj`。它使用与 JSON 相同的递归值模型，但以`据`、`列`、`真`、`假`、`空`和全角结构符号表达数据。解析、序列化与文件接口由言序自身实现。
+言据（YanJu）1.2.0 是言序生态的配置与数据交换基础，文件扩展名为`.yj`。它使用与 JSON
+相同的递归值模型，但以`据`、`列`、`真`、`假`、`空`和全角结构符号表达数据。解析器、
+序列化器、校验和补丁全部由言序实现；JSON 只在显式转换时参与。
 
 ```yanju
 据【
   「项目」：「言据」，
-  「后缀」：「.yj」，
   「格式版本」：1，
-  「实现语言」：「言序」，
+  「库版本」：「1.2.0」，
   「稳定」：真，
-  「能力」：列【「配置」，「交换」，「流」】，
-  「备注」：空
+  「能力」：列【「配置」，「补丁」，「流」，「HTTP」，「数据库」】
 】
 ```
 
 <Cards>
-  <Card title="格式规范" description="值模型、文字转义和规范序列化" href="/ecosystem/yanju/format/" />
-  <Card title="校验与路径" description="声明配置约束并查询或更新嵌套数据" href="/ecosystem/yanju/validation-paths/" />
-  <Card title="数据处理与转换" description="比较、合并、差异以及 JSON/TOML 互转" href="/ecosystem/yanju/operations-conversion/" />
-  <Card title="流与结构化错误" description="增量处理换行分帧数据并诊断失败" href="/ecosystem/yanju/streams-errors/" />
+  <Card title="格式规范" description="值模型、文字转义、资源限制和规范序列化" href="/ecosystem/yanju/format/" />
+  <Card title="校验与路径" description="声明配置约束并查询或不可变更新嵌套数据" href="/ecosystem/yanju/validation-paths/" />
+  <Card title="数据、补丁与转换" description="比较、合并、差异重放以及 JSON/TOML/数据库互转" href="/ecosystem/yanju/operations-conversion/" />
+  <Card title="流与结构化错误" description="有界换行分帧、稳定错误代码与恢复策略" href="/ecosystem/yanju/streams-errors/" />
 </Cards>
 
-## 何时使用
+## 安装稳定标签
 
-- 为言序应用保存可读、可稳定比较的配置；
-- 在言序程序、命令行和服务之间交换结构化数据；
-- 用声明式规则检查外部配置，而不是在业务代码中反复判断类型；
-- 通过逐行帧处理日志、事件或进程管道；
-- 需要与 JSON 或配置型 TOML 无损互转的场景。
-
-格式版本与库版本分别演进。言据 1.1 标准库仍生成格式 v1 文档，因此 1.0 读取方可以读取它产生的普通`.yj`文件；校验规则和言据流是格式之上的独立协议。
-
-## 添加依赖
-
-在应用的`言序.toml`中声明 Git 依赖。省略修订时，第一次安装从默认分支解析，并由`言序.lock`固定到精确提交：
+最低言序为 1.1.6。格式版本与库版本独立演进：1.2.0 继续读写格式 v1。
 
 ```toml
 [依赖]
-言据 = { git = "https://github.com/yanxulang/yanju.git", 版 = "^1.1" }
+言据 = { git = "https://github.com/yanxulang/yanju.git", 修订 = "v1.2.0", 版 = "^1.2" }
 ```
-
-使用言包安装并生成锁文件：
 
 ```sh
 yanbao install
 ```
-
-随后从包入口导入：
 
 ```yanxu
 引「包:言据」为 言据；
@@ -59,8 +45,48 @@ yanbao install
 言 言据.美化（配置）；
 ```
 
-日常升级应显式执行`yanbao update`并审阅锁文件变化。包管理与复现语义见[言包指南](/tooling/package-manager/)。
+## 1.2 稳定能力
 
-## 版本与仓库
+- 确定性规范序列化、UTF-8 文件读写和格式检查。
+- 类型/联合、枚举、范围、长度、列项目、必需键与额外键 Schema。
+- 路径查询、不可变设定、深复制、稳定比较和递归合并。
+- 稳定差异以及校验旧值的`应用补丁`，冲突返回`YJ_PATCH_CONFLICT`。
+- 字符、容器深度和全树容器项三维解析限制，并覆盖流式帧。
+- JSON 和配置型 TOML 显式互转，不静默丢失无法表示的类型。
+- 版本化 HTTP 媒体类型，不把`application/json`误认成言据。
+- 跨数据库规范 TEXT/CLOB 边界；原生 JSON 仍是另一种表示。
+- 稳定`YJ_*`错误详情，程序不必解析中文消息。
 
-当前文档对应言据标准库`1.1.0`和格式 v1。源码、完整规范、API 文档、测试与性能基准位于[言据仓库](https://github.com/yanxulang/yanju)。
+## 处理不可信输入
+
+默认上限是 1,048,576 个 Unicode 字符、64 层容器和全树 100,000 个容器项。服务端应
+按协议收紧：
+
+```yanxu
+定 值 为 言据.解析受限（正文，{
+    「最大字符」：65536，
+    「最大深度」：24，
+    「最大容器项」：4096
+}）；
+```
+
+未知限制键或非正整数返回`YJ_LIMIT_CONFIG`；超限分别返回`YJ_SIZE`、`YJ_DEPTH`和
+`YJ_ITEMS`。
+
+## HTTP 与数据库
+
+推荐媒体类型为`application/vnd.yanxu.yanju; version=1`。发送前使用`序列化`，接收时
+先检查`是言据媒体类型`，再进行受限解析。
+
+所有数据库都可以用`数据库文本`写入确定的 TEXT/CLOB，并用`自数据库文本`恢复。
+`自规范数据库文本`用于审计存量内容是否已经规范。PostgreSQL JSONB、MySQL JSON 和
+SQLite JSON1 是结构化存储策略，不等同于`.yj`文本。
+
+## 权限与限制
+
+内存、HTTP 媒体类型和数据库文本转换不申请权限；文件接口需要最终应用授权实际路径。
+格式 v1 不接受指数、NaN 或无穷值；流协议是一行一帧；TOML 只覆盖无损配置子集；项目
+媒体类型尚未向 IANA 注册。
+
+源码、规范、API 与 Release：[yanxulang/yanju](https://github.com/yanxulang/yanju)，
+[v1.2.0](https://github.com/yanxulang/yanju/releases/tag/v1.2.0)。

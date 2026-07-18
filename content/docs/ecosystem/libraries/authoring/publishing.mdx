@@ -1,0 +1,153 @@
+---
+title: 版本与发布
+description: 采用 SemVer、独立步骤提交、普通 merge PR、附注标签和可复核 Release。
+---
+
+## 选择版本
+
+言序包使用语义化版本`主.次.修订`：
+
+- 修订版修复缺陷，不改变已记录公共契约；
+- 次版本增加向后兼容能力，可以新增 API 或支持平台；
+- 主版本允许破坏性变化，但必须给出迁移路径；
+- 预发布写作`1.1.0-rc.1`，不能冒充稳定版。
+
+版本判断要同时检查 API、数据格式、错误代码、默认权限、资源上限、最低言序、原生 ABI、
+命令行为和可观察输出。安全策略收紧可能是破坏性变化，不能只看函数签名。
+
+## 同步发布文档
+
+发布候选至少同步这些位置：
+
+1. `言序.toml`中的包版本和最低言序；
+2. 源码公开版本常量；
+3. 原生工程的`Cargo.toml`等版本元数据；
+4. `CHANGELOG.md`，按“新增、变更、修复、安全、验证”记录使用者可见变化；
+5. `COMPATIBILITY.md`，列出工具链、依赖、平台、外部服务和原生 ABI；
+6. `docs/MIGRATION.md`，给出旧写法、新写法、行为变化和回退方案；
+7. 生成的 Markdown/JSON API、README 示例和 Release Notes。
+
+CHANGELOG 只写已经完成并验证的事实，不复制提交列表。破坏性变化必须可搜索、可操作，说明
+谁受影响、为何改变以及如何迁移。
+
+## 分支与独立步骤提交
+
+不要直接把发布改动推到默认分支。创建用途清晰的分支：
+
+```sh
+git switch -c release/v1.0.0
+```
+
+每个提交只包含一个可独立验证的目的，例如“固定公开错误协议”“补齐独立消费者”“增加
+三平台 CI”“准备 1.0 文档”。先运行对应门禁，再提交该步骤。格式化、大范围重构、依赖更新
+和功能实现不要混在一个提交中；审查后发现问题时增加后续修复提交，不重写已经共享的历史。
+
+```sh
+git add src tests docs
+git commit -m "稳定公开错误协议"
+git push -u origin release/v1.0.0
+```
+
+提交消息说明结果和边界，不写密钥、内部路径、临时服务地址或与项目无关的元数据。
+
+## 普通 merge PR
+
+通过 PR 审查完整差异和逐项门禁：
+
+```sh
+gh pr create --base main --head release/v1.0.0 --fill
+PR="$(gh pr view --json number --jq .number)"
+gh pr checks "$PR" --watch
+gh pr merge "$PR" --merge --delete-branch
+```
+
+选择普通 merge，不使用 squash 或 rebase。合并后的主提交应有两个父提交，保留步骤提交与
+审查边界：
+
+```sh
+git switch main
+git pull --ff-only origin main
+test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" -eq 3
+```
+
+在 PR 合并前不得创建稳定标签。主分支 CI 必须在最终合并提交上成功；若工作流监听标签，
+标签 CI 也必须执行相同或更严格的门禁。
+
+## 创建附注标签
+
+稳定标签使用`v`加清单版本，并且必须是附注标签：
+
+```sh
+git fetch origin main --tags
+test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+git tag -a v1.0.0 -m "言例 1.0.0"
+test "$(git cat-file -t v1.0.0)" = tag
+git push origin v1.0.0
+```
+
+标签对象指向的提交、`origin/main`和本地最终提交应完全一致：
+
+```sh
+test "$(git rev-parse 'v1.0.0^{}')" = "$(git rev-parse origin/main)"
+```
+
+不要用轻量标签，也不要让标签指向发布分支的未合并提交。已经公开的标签不可移动、删除后
+重建或强制推送；若发布内容有误，修复后发布新的补丁版本。稳定生态曾用 1.0.1 修复全新
+克隆锁一致性，而没有改写已经公开的 1.0.0，这正是应有做法。
+
+## 打包与 GitHub Release
+
+当前言包可以生成确定性的`.yxp`包，但没有把包直接发布到远端的`publish`命令：
+
+```sh
+yanbao pack --offline -o build/言例-1.0.0.yxp
+```
+
+纯源码 Git 依赖以附注标签为权威来源，`.yxp`可作为可复核附件。CI 对所有附件计算 SHA-256，
+在干净环境重新下载并复算后，再创建非草稿、非预发布的稳定 Release：
+
+```sh
+gh release create v1.0.0 \
+  build/言例-1.0.0.yxp \
+  build/言例-1.0.0.yxp.sha256 \
+  --verify-tag \
+  --title "言例 1.0.0" \
+  --notes-file docs/RELEASE_NOTES_1.0.0.md
+```
+
+没有附件的纯源码包可以省略文件参数。候选版使用单独的预发布标签并显式传入
+`--prerelease`，不能先把未验收版本发布为稳定版再原地修改。
+
+Release Notes 至少包含：
+
+- 主要能力和安装清单；
+- 最低言序、直接依赖、权限与原生 ABI；
+- 已验证平台、架构、外部服务版本和 CI 链接；
+- 制品名称、大小、SHA-256、签名或公证的真实状态；
+- 破坏性变化与迁移链接；
+- 已知限制、安全修复和私密漏洞报告入口。
+
+## 原生制品的来源边界
+
+Git 依赖解析器读取标签中的仓库内容，不会自动下载 GitHub Release 附件。原生包必须选择
+一种可消费且可审计的方式：
+
+- 在标签中包含每个支持目标的制品，并在`[原生.*]`固定路径、大小和 SHA-256；或
+- 把完整多目标包发布为 Release 归档，再通过兼容的包索引提供该归档及摘要。
+
+不能只在 Release 上传动态库，却让 Git 标签清单指向不存在的文件。也不能把 Release 归档
+误写成 Git 来源。多目标汇总应拒绝缺失、重复、错误架构或摘要不一致的制品，并如实披露
+glibc、Windows CRT、macOS 签名与公证边界。
+
+## 发布后核对
+
+```sh
+gh release view v1.0.0 \
+  --json tagName,isDraft,isPrerelease,targetCommitish
+git fetch origin main --tags
+test "$(git rev-parse 'v1.0.0^{}')" = "$(git rev-parse origin/main)"
+```
+
+确认 Release 不是草稿或预发布，标签与默认分支一致，主分支及标签 CI 全部成功，公开附件
+能重新下载且摘要一致。最后从公开标签执行[全新克隆和独立消费者验收]
+(/ecosystem/libraries/authoring/testing-ci/#全新克隆验收)，而不是复用开发工作树或缓存。
