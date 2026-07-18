@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { gzipSync } from 'node:zlib';
 
 const output = path.resolve(process.argv[2] ?? 'out');
 const failures = [];
@@ -73,8 +74,13 @@ for (const required of [
   if (!fs.existsSync(path.join(output, required))) failures.push(`缺少生产文件：${required}`);
 }
 
-const searchIndexBytes = fs.statSync(path.join(output, 'api/search')).size;
-if (searchIndexBytes > 6_000_000) failures.push(`中文搜索索引超过 6 MB：${searchIndexBytes} B`);
+const searchIndex = fs.readFileSync(path.join(output, 'api/search'));
+const searchIndexBytes = searchIndex.byteLength;
+const compressedSearchIndexBytes = gzipSync(searchIndex, { level: 9 }).byteLength;
+if (searchIndexBytes > 8_000_000) failures.push(`中文搜索索引超过 8 MB：${searchIndexBytes} B`);
+if (compressedSearchIndexBytes > 2_000_000) {
+  failures.push(`中文搜索索引 gzip 后超过 2 MB：${compressedSearchIndexBytes} B`);
+}
 
 for (const file of walk(path.join(output, '_next/static'), '.js')) {
   const bytes = fs.statSync(file).size;
