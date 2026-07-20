@@ -3,12 +3,26 @@ title: 迁移指南
 description: 按目标版本核对行为、权限、公共格式和应用制品变化。
 ---
 
-升级前先提交清单与锁文件，记录当前`yanxu version --json`，并在独立分支运行检查、格式化、规格测试和构建。跨多个版本时按时间顺序逐份阅读，不要只看最后一版。
+升级前先提交清单与锁文件，记录当前`yanxu version --json`，并在独立分支运行检查、格式化、规格测试、审计和构建。跨多个稳定版本时按时间顺序阅读；1.1.18 与 1.1.19 只有追溯快照，1.1.17 用户直接迁移到 1.1.20。
+
+## 当前稳定升级
 
 <Cards>
-  <Card title="迁移到 1.1.6" description="宿主权限交集、包信任与原生扩展边界" href="/reference/migrations/1.1.6/" />
-  <Card title="迁移到 1.1.7" description="ABI v2、独立桌面权限、YXB 与 Bundle 变化" href="/reference/migrations/1.1.7/" />
+  <Card title="迁移到 1.1.20" description="不可变依赖、安全归档、32 层解析边界与元组格式化修复" href="/reference/migrations/1.1.20/" />
+  <Card title="1.1.19 追溯" description="未晋升预发布版的解析边界与格式化风险" href="/reference/migrations/1.1.19/" />
+  <Card title="1.1.18 追溯" description="最终由 1.1.20 交付的依赖、归档、ABI 与供应链边界" href="/reference/migrations/1.1.18/" />
+  <Card title="迁移到 1.1.17" description="CIDR 网络授权、24 小时子进程与宿主事件泵" href="/reference/migrations/1.1.17/" />
+  <Card title="迁移到 1.1.16" description="16 MiB 二进制预算与旧字节码重建" href="/reference/migrations/1.1.16/" />
+  <Card title="迁移到 1.1.15" description="显式本地网络能力" href="/reference/migrations/1.1.15/" />
+  <Card title="迁移到 1.1.14" description="HTTP 与套接字预算分离" href="/reference/migrations/1.1.14/" />
+  <Card title="迁移到 1.1.13" description="模块限定类型、字节码 2 与模块 API v2" href="/reference/migrations/1.1.13/" />
+  <Card title="迁移到 1.1.12" description="YXB 大整数精确往返" href="/reference/migrations/1.1.12/" />
+  <Card title="迁移到 1.1.11" description="Windows 锁定依赖路径" href="/reference/migrations/1.1.11/" />
+  <Card title="迁移到 1.1.10" description="HTTP 4xx/5xx 响应与 TLS 错误" href="/reference/migrations/1.1.10/" />
+  <Card title="迁移到 1.1.9" description="全局执行步数与回调独立预算" href="/reference/migrations/1.1.9/" />
   <Card title="迁移到 1.1.8" description="Windows 图形回调栈修复与制品重建要求" href="/reference/migrations/1.1.8/" />
+  <Card title="迁移到 1.1.7" description="ABI v2、独立桌面权限、YXB 与 Bundle 变化" href="/reference/migrations/1.1.7/" />
+  <Card title="迁移到 1.1.6" description="宿主权限交集、包信任与原生扩展边界" href="/reference/migrations/1.1.6/" />
 </Cards>
 
 源码弃用可先运行`yanxu migrate --check`或`yanxu migrate --diff`。公共格式主版本与兼容策略见[公共格式](/reference/formats/)和[1.x 兼容政策](/reference/compatibility/)。

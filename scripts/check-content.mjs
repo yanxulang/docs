@@ -90,9 +90,41 @@ const layout = read('lib/layout.shared.tsx');
 assert.ok(!/图形|GUI|桌面|言窗|言界/i.test(layout), '顶栏不得包含桌面界面入口');
 
 const packageJson = JSON.parse(read('package.json'));
-assert.equal(packageJson.version, '1.1.8');
+assert.equal(packageJson.version, '1.1.20');
 assert.match(read('content/docs/standard-library/index.mdx'), /25 个标准模块/);
 assert.match(read('app/layout.tsx'), /metadataBase:\s*new URL\('https:\/\/docs\.yanxu\.dev\/'\)/);
+
+const docsCi = read('.github/workflows/ci.yml');
+assert.match(docsCi, /name: 入门语言示例[\s\S]*?ref: v1\.1\.20/, '语言示例 CI 未固定言序 1.1.20');
+assert.match(docsCi, /name: 桌面生态示例[\s\S]*?ref: v1\.1\.9/, '言界示例 CI 未固定已验证的言序 1.1.9');
+assert.match(read('content/docs/language/binary-data.mdx'), /单值硬上限为 16 MiB/);
+assert.match(read('content/docs/reference/project-format.mdx'), /\| 字节码块 \| 2 \| 2 \|/);
+assert.match(read('content/docs/reference/permissions.mdx'), /15 项宿主能力/);
+assert.match(read('content/docs/reference/permissions.mdx'), /`本地网络`/);
+const migrationMeta = JSON.parse(read('content/docs/reference/migrations/meta.json'));
+for (let patch = 6; patch <= 20; patch += 1) {
+  assert.ok(migrationMeta.pages.includes(`1.1.${patch}`), `迁移导航缺少 1.1.${patch}`);
+}
+assert.match(read('content/docs/reference/migrations/1.1.20.mdx'), /1\.1\.17 用户应直接升级到 1\.1\.20/);
+const packageManager = read('content/docs/tooling/package-manager.mdx');
+for (const requirement of [
+  '0.6.1', '言序 1.1.20', 'CLI001..CLI010', 'TXN001..TXN005',
+  '--message-format', 'AUDIT_CAPABILITY_MISSING', 'CycloneDX 1.5',
+]) {
+  assert.ok(packageManager.includes(requirement), `言包文档缺少 ${requirement}`);
+}
+const desktopManifest = read('examples/desktop/言序.toml');
+assert.match(desktopManifest, /言序 = ">=1\.1\.9"/);
+assert.match(desktopManifest, /修订 = "v0\.1\.1"/);
+const desktopLock = read('examples/desktop/言序.lock');
+assert.match(desktopLock, /generator = "1\.1\.9"/);
+assert.match(desktopLock, /yanxu-ui@0\.1\.1/);
+assert.match(desktopLock, /minimum_yanxu = ">=1\.1\.9"/);
+const desktopCompatibility = read('content/docs/ecosystem/desktop/compatibility.mdx');
+for (const requirement of ['1.1.9', '1.1.20', '0.5.0', '0.6.1', '0.1.1', '1.1.2']) {
+  assert.ok(desktopCompatibility.includes(requirement), `桌面兼容矩阵缺少 ${requirement}`);
+}
+assert.match(desktopCompatibility, /不存在“言序 1\.1\.20 \+ 言包 0\.6\.1 \+ 言界 0\.1\.1”/);
 
 const stableLibraries = [
   ['yanju', '1.2.0', '1.1.6', 'content/docs/ecosystem/yanju/index.mdx', '/ecosystem/yanju/'],

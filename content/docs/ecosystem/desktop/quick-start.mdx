@@ -1,20 +1,24 @@
 ---
 title: 快速开始
-description: 使用言序 1.1.8 和言包安装言界，构建第一个原生窗口。
+description: 使用言序 1.1.9、言包 0.5.0 与言界 0.1.1 复现已验证的预览组合。
 ---
 
-先确认`yanxu --version`为`1.1.8`或兼容版本，`yanbao --version`为`0.5.0`或兼容版本。创建普通言序项目后，在`言序.toml`中加入言界：
+<Callout type="warning" title="不要与当前稳定工具链混用">
+  本页复现言界 0.1.1 发布时的已验证组合：言序 1.1.9 与言包 0.5.0。言序 1.1.20 会在言界源码的可空目标变量处报告类型错误，言包 0.6.1 也不能运行在 1.1.9 上。使用当前稳定工具链时，请改走[言窗 1.0](/ecosystem/desktop/gui/)。
+</Callout>
+
+先确认`yanxu --version`为`1.1.9`，`yanbao --version`为`0.5.0`。创建普通言序项目后，在`言序.toml`中加入言界：
 
 ```toml
 [包]
 格式 = 2
 名称 = "我的窗口"
 版本 = "0.1.0"
-言序 = ">=1.1.8"
+言序 = ">=1.1.9"
 入口 = "src/主.yx"
 
 [依赖]
-言界 = { 包 = "yanxu-ui", git = "https://github.com/yanxulang/yanxu-ui.git", 修订 = "v0.1.0", 版 = "^0.1" }
+言界 = { 包 = "yanxu-ui", git = "https://github.com/yanxulang/yanxu-ui.git", 修订 = "v0.1.1", 版 = "^0.1" }
 
 [权限]
 图形界面 = true

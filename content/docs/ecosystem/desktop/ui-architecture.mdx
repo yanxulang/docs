@@ -1,6 +1,6 @@
 ---
 title: 言界架构
-description: 言界 0.1.0 的保留模式控件树、布局、事件、文本与渲染管线。
+description: 言界 0.1.1 的保留模式控件树、布局、事件、文本与渲染管线。
 ---
 
 言界除调用言台的边界模块外全部使用言序编写。一个窗口拥有一棵长期存在的控件树；属性变化标记布局或绘制脏区，下一帧只重新计算受影响的子树，再把渲染树编码为一个`YXDR`帧提交。
@@ -30,4 +30,6 @@ description: 言界 0.1.0 的保留模式控件树、布局、事件、文本与
 
 按钮等高级控件完整处理悬停、按下、键盘激活和绘制；言台没有“创建按钮”操作。言界源码也不包含 Win32、AppKit、Wayland、X11 或平台指针分支。
 
-实现细节见[言界架构](https://github.com/yanxulang/yanxu-ui/blob/v0.1.0/docs/ARCHITECTURE.md)与[API 文档](https://github.com/yanxulang/yanxu-ui/blob/v0.1.0/docs/API.md)。
+0.1.1 会按样式名与悬停、按下、焦点、禁用状态位缓存主题解析结果，并缓存基础样式与控件种类样式的合并，避免每个控件在每帧重复深合并。缓存只改变渲染开销，不改变主题字段、继承或状态优先级。
+
+实现细节见[言界架构](https://github.com/yanxulang/yanxu-ui/blob/v0.1.1/docs/ARCHITECTURE.md)与[API 文档](https://github.com/yanxulang/yanxu-ui/blob/v0.1.1/docs/API.md)。
