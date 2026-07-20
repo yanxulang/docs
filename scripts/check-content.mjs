@@ -104,6 +104,13 @@ for (let patch = 6; patch <= 20; patch += 1) {
   assert.ok(migrationMeta.pages.includes(`1.1.${patch}`), `迁移导航缺少 1.1.${patch}`);
 }
 assert.match(read('content/docs/reference/migrations/1.1.20.mdx'), /1\.1\.17 用户应直接升级到 1\.1\.20/);
+const packageManager = read('content/docs/tooling/package-manager.mdx');
+for (const requirement of [
+  '0.6.1', '言序 1.1.20', 'CLI001..CLI010', 'TXN001..TXN005',
+  '--message-format', 'AUDIT_CAPABILITY_MISSING', 'CycloneDX 1.5',
+]) {
+  assert.ok(packageManager.includes(requirement), `言包文档缺少 ${requirement}`);
+}
 
 const stableLibraries = [
   ['yanju', '1.2.0', '1.1.6', 'content/docs/ecosystem/yanju/index.mdx', '/ecosystem/yanju/'],

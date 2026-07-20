@@ -1,9 +1,9 @@
 ---
 title: 言包工程工具
-description: 使用言包创建项目，并通过短包名管理 GitHub 依赖。
+description: 使用言包 0.6.1 创建项目、管理依赖、恢复事务并执行结构化安全审计。
 ---
 
-言包（`yanbao`）是言序的官方工程与包管理工具，命令层完全由言序源码编写；仓库没有 Cargo 工程或 Rust 业务代码。0.5.0 要求言序 1.1.7 或更高版本，本站以 1.1.8 验收；它负责项目初始化、依赖、测试、YXB、Standalone、Bundle、缓存、诊断和打包，但不复制第二套 TOML、SemVer、依赖解析、锁图、YXB 或 Bundle 实现。
+言包（`yanbao`）是言序的官方工程与包管理工具，命令层完全由言序源码编写；仓库没有 Cargo 工程或 Rust 业务代码。当前稳定版为 0.6.1，普通命令要求言序 1.1.17 或更高版本；完整安全审计需要核心提供十二项 Schema 1 能力，稳定组合使用言序 1.1.20。它负责项目初始化、依赖、测试、YXB、Standalone、Bundle、缓存、诊断和打包，但不复制第二套 TOML、SemVer、依赖解析、锁图、YXB 或 Bundle 实现。
 
 ## 最常用的包命令
 
@@ -18,7 +18,7 @@ yanbao install
 
 ## 安装
 
-请先安装言序 1.1.7 或更高版本，并确保`yanxu`位于`PATH`中。再运行言包安装器：
+请先安装言序 1.1.17 或更高版本，并确保`yanxu`位于`PATH`中。本站推荐直接使用 1.1.20，再运行言包安装器：
 
 ```sh
 curl -fsSL https://get.yanxu.dev/yanbao | sh
@@ -32,7 +32,7 @@ Windows 使用 PowerShell 安装器：
 irm https://get.yanxu.dev/yanbao/windows | iex
 ```
 
-安装器校验下载制品和版本，然后使用系统言序执行言包。可用`YANXU_BIN=/绝对路径/yanxu`指定运行时；言包不会复制或覆盖言序，也不需要 Rust 版言包。
+安装器校验下载制品和版本，然后使用系统言序执行言包。可用`YANXU_BIN=/绝对路径/yanxu`指定运行时，也可用`YANBAO_VERSION=0.6.1`固定安装；言包不会复制或覆盖言序，也不需要 Rust 版言包。
 
 ## 创建项目
 
@@ -43,6 +43,8 @@ yanbao doctor --manifest-path 我的项目
 ```
 
 `init`创建格式 2 的`言序.toml`、`言序.lock`、`src/主.yx`和`.gitignore`；不会创建 Git 仓库，也不会无提示覆盖已有模板。中文命令可写作`yanbao 新 我的项目`。
+
+0.6 起，`new/init`会在目标同一文件系统内暂存完整项目，完成解析与静态检查后再提交。`--force`只替换清单、入口、锁文件及言包新建的忽略文件，不会删除其他内容。中断后检测到恢复日志时，在确认没有其他进程操作项目后，为原命令增加`--recover`或`--恢复`；并发改写会以`TXN005`拒绝覆盖。
 
 ## 管理完整依赖图
 
@@ -55,7 +57,7 @@ yanbao remove 工具
 yanbao install --offline
 ```
 
-`add/remove`默认重新解析完整直接与传递图；失败时同时恢复清单和锁文件。`--no-lock`可只编辑清单。格式 2 锁文件固定每条依赖边、精确版本/提交、来源、校验和、目标、导出和原生制品。
+`add/remove`默认先通过核心协议预演，再重新解析完整直接与传递图；普通失败会同时恢复清单和锁文件，中断现场使用同一`--recover`流程。项目创建、依赖编辑与其他项目命令共享独占锁，未完成事务会以`TXN001..TXN005`稳定拒绝并保留现场。`--no-lock`可只编辑清单。格式 2 锁文件固定每条依赖边、精确版本/提交、来源、校验和、目标、导出和原生制品。
 
 ```sh
 yanbao tree
@@ -66,6 +68,33 @@ yanbao doctor
 ```
 
 这些命令分别解释依赖树、引入路径、可更新项、更新计划和工具链状态。`update --dry-run`不会改写锁文件；正式`update`才重新选择允许范围内的版本。
+
+## 严格命令行与结构化输出
+
+0.6 起，中英文子命令、位置参数、布尔旗标、单值选项、互斥关系与`--`透传使用同一严格解析器。未知参数、缺值、重复和冲突不会回退到默认值，而是以`CLI001..CLI010`和非零状态失败。使用`yanbao help <命令>`或`yanbao <命令> --help`查询精确选项。
+
+所有命令支持 human、JSON 与 JSON Lines：
+
+```sh
+yanbao check --message-format json
+yanbao build --release --message-format json-lines
+yanbao test --timeout 900000
+```
+
+结构化结果使用 Draft 2020-12 Schema 1，统一包含命令、成功状态、退出码、项目根、阶段、诊断、变更、制品和耗时。失败仍保持非零进程状态。`--timeout`、`--超时`或`YANBAO_TIMEOUT`接受 1..=86,400,000 毫秒，命令行值优先；默认值按元数据、检查、解析、测试、打包、构建和运行分别设置。
+
+## 安全审计
+
+```sh
+yanbao audit
+yanbao audit --deny-level medium
+yanbao audit --suppress 'AUDIT_LICENSE_MISSING@2026-12-31@已复核内部依赖'
+yanbao audit --message-format json
+```
+
+默认拒绝`critical`与`high`发现；可选门禁为`critical|high|medium|low|info|none`。精确抑制必须同时记录诊断代码、UTC 到期日和原因；到期项不会继续掩盖发现，并额外报告`AUDIT_SUPPRESSION_EXPIRED`。`--deny-warnings`兼容等价于 medium 门禁；`audit --json`是 JSON 输出简写，不能与`--message-format`同时使用。
+
+言包会在审计前验证工程协议握手，并在响应后复验回显。核心必须完整声明锁定 SHA-256、来源传输、精确 Git 修订、SPDX 许可证、撤回、漏洞、重复版本、目标及原生 ABI/目标/摘要/来源证明十二项检查；缺失、不完整或不一致都以`AUDIT_CAPABILITY_MISSING`失败关闭。0.6.1 还会校验发现对象的代码、严重度、包名、消息和可选源码位置，畸形对象以`AUDIT_SCHEMA`拒绝。
 
 ## 开发、构建和分发
 
@@ -82,12 +111,14 @@ yanbao vendor
 yanbao audit
 ```
 
-`build`调用核心生成 YXB、当前平台 standalone 或 GUI Bundle；GUI 模板自动写入应用配置、独立权限和`yanxu-gui`依赖。`pack`生成确定性`.yxp`；`vendor`复制完整锁定图以便离线恢复；`audit`复核校验和、来源、许可证、重复版本与原生制品。工作区会对声明成员执行同一套命令。
+`build`调用核心生成 YXB、当前平台 standalone 或 GUI Bundle；GUI 模板自动写入应用配置、独立权限和`yanxu-gui ^1.0`依赖。`pack`生成确定性`.yxp`；`vendor`事务化复制完整锁定图以便离线恢复；`audit`执行上述完整能力协商。工作区会对声明成员执行同一套命令。
 
 ## 职责与安全边界
 
 言包通过`yanxu package protocol`的版本化 JSON 协议调用核心`yanxu-package`。启动时会协商清单 2、锁 2、YXB 1、工程协议 1、原生 ABI v1/v2 和 Bundle 操作；核心不兼容时会明确要求先升级言序。
 
-路径、Git 和索引包只有通过锁定与内容校验后才可参与模块加载。依赖权限不会传给应用，GUI 也不会自动授予文件或网络；第三方包不能自动执行构建脚本。原生后端必须来自锁定目标且通过摘要门禁，运行时不下载。言包 Release、标签和 CI 与核心运行时分别管理，不能以核心 Release 替代言包自身验收。
+路径、Git 和索引包只有通过锁定与内容校验、并发布为核心 1.1.20 的不可变 generation 后才可参与模块加载。依赖权限不会传给应用，GUI 也不会自动授予文件或网络；第三方包不能自动执行构建脚本。原生后端必须来自锁定目标且通过摘要门禁，运行时不下载。
+
+言包 0.6.1 的六目标 Release 分别提供确定性 CycloneDX 1.5 SBOM、构建元数据与依赖锁，并用构建来源和 SBOM 证明绑定源码、正式言序编译器标签提交、目标和制品摘要。安装冒烟只消费先验验签后的本地只读快照，并在启动子进程前移除下载凭据。言包 Release、标签和 CI 与核心运行时分别管理，不能以核心 Release 替代言包自身验收。
 
 源码、问题与贡献说明见[YanXuLang/yanbao](https://github.com/YanXuLang/yanbao)。
