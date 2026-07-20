@@ -5,12 +5,12 @@ description: 构建语言核心、运行测试并找到各子项目仓库。
 
 ## 构建语言核心
 
-需要安装稳定版 Rust 工具链和 Git：
+言序 1.1.20 的最低支持 Rust 版本是 1.89；还需要 Git：
 
 ```sh
 git clone https://github.com/YanXuLang/yanxu.git
 cd yanxu
-cargo test --all-targets --locked
+cargo test --workspace --all-targets --locked
 cargo install --path .
 ```
 

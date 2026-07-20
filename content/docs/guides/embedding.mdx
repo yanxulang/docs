@@ -18,7 +18,7 @@ assert_eq!(result.output, ["42"]);
 
 宿主可设置`config.arguments`，由程序通过`环境.参数（）`读取。返回值为`字节串`时，`Execution.value`仍是无泄露的长度摘要，原始内容仅出现在`value_bytes: Option<Vec<u8>>`。
 
-默认配置使用字节码 VM、静态检查和无宿主能力沙箱。可信宿主可用`PermissionSet`逐项开放文件根目录、网络外连主机、TCP 监听地址、UDP 绑定地址或环境变量；`allow_process`开放子进程能力。`EngineConfig::unrestricted`必须由宿主显式选择。
+默认配置使用字节码 VM、静态检查和无宿主能力沙箱。可信宿主可用`PermissionSet`逐项开放文件根目录、网络外连主机或 CIDR、显式本地网络、TCP 监听地址、UDP 绑定地址或环境变量；`allow_process`开放子进程能力。`EngineConfig::unrestricted`必须由宿主显式选择。
 
 运行 YXB 时，归档权限是应用的申请，不是授权。`PermissionSet::intersect`把申请与宿主配置合并；应用无法超过宿主上限，执行结束后也会恢复原宿主权限。1.1.7 新增的 GUI、剪贴板、文件对话框、通知、托盘、外部地址和全局快捷键也分别相交。沙箱宿主即使载入声明了全权限且重新计算过校验和的 YXB，仍保持沙箱。
 
@@ -31,6 +31,7 @@ let mut config = EngineConfig::sandboxed(Backend::Bytecode);
 config.permissions = PermissionSet::sandboxed()
     .allow_file("./data")
     .allow_network("api.example.com")
+    .allow_local_network()
     .allow_tcp_listen("127.0.0.1")
     .allow_udp_bind("127.0.0.1")
     .allow_environment("YANXU_PROFILE");
@@ -45,13 +46,14 @@ config.budget = yanxu::budget::ExecutionBudget::new(200_000, 128, 20_000);
 [权限]
 文件 = ["data", "src"]
 网络 = ["api.example.com"]
+本地网络 = false
 TCP监听 = ["127.0.0.1"]
 UDP绑定 = ["127.0.0.1"]
 环境 = ["YANXU_PROFILE"]
 进程 = false
 ```
 
-`yanxu 包 运行 [路径] [-- 参数...]`按清单权限执行入口。为兼容 0.7 及更早脚本，直接执行`yanxu 文卷.yx`仍是显式不受限模式；运行来源不可信的程序时应使用包运行或嵌入沙箱。模块文件、文件标准库、网络与绑定能力、环境变量在树解释器与 VM 中执行相同权限判定。DNS 后的回环、私网和链路本地目标必须额外以真实 IP 精确授权。
+`yanxu 包 运行 [路径] [-- 参数...]`按清单权限执行入口。为兼容 0.7 及更早脚本，直接执行`yanxu 文卷.yx`仍是显式不受限模式；运行来源不可信的程序时应使用包运行或嵌入沙箱。模块文件、文件标准库、网络与绑定能力、环境变量在树解释器与 VM 中执行相同权限判定。DNS 后的回环、私网、链路本地和 CGNAT 目标必须由应用与宿主同时通过精确 IP 或显式本地网络能力授权；其他敏感网段使用最窄 CIDR。
 
 ## C ABI
 

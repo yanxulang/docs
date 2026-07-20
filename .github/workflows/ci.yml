@@ -27,11 +27,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-      - name: 检出言序 1.1.8
+      - name: 检出言序 1.1.20
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           repository: YanXuLang/yanxu
-          ref: v1.1.8
+          ref: v1.1.20
           path: target/yanxu-core
       - name: 构建言序
         run: cargo build --manifest-path target/yanxu-core/Cargo.toml --locked --bin yanxu
@@ -71,11 +71,11 @@ jobs:
           sudo apt-get -o Acquire::Retries=5 install -y \
             libfontconfig1 libwayland-client0 libxkbcommon0 libxkbcommon-x11-0 \
             libx11-6 xvfb
-      - name: 检出言序 1.1.8
+      - name: 检出言序 1.1.20
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           repository: YanXuLang/yanxu
-          ref: v1.1.8
+          ref: v1.1.20
           path: target/yanxu-core
       - name: 构建言序并锁定言界
         run: |

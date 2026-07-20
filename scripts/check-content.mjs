@@ -90,9 +90,20 @@ const layout = read('lib/layout.shared.tsx');
 assert.ok(!/图形|GUI|桌面|言窗|言界/i.test(layout), '顶栏不得包含桌面界面入口');
 
 const packageJson = JSON.parse(read('package.json'));
-assert.equal(packageJson.version, '1.1.8');
+assert.equal(packageJson.version, '1.1.20');
 assert.match(read('content/docs/standard-library/index.mdx'), /25 个标准模块/);
 assert.match(read('app/layout.tsx'), /metadataBase:\s*new URL\('https:\/\/docs\.yanxu\.dev\/'\)/);
+
+assert.match(read('.github/workflows/ci.yml'), /ref: v1\.1\.20/g, '示例 CI 未固定言序 1.1.20');
+assert.match(read('content/docs/language/binary-data.mdx'), /单值硬上限为 16 MiB/);
+assert.match(read('content/docs/reference/project-format.mdx'), /\| 字节码块 \| 2 \| 2 \|/);
+assert.match(read('content/docs/reference/permissions.mdx'), /15 项宿主能力/);
+assert.match(read('content/docs/reference/permissions.mdx'), /`本地网络`/);
+const migrationMeta = JSON.parse(read('content/docs/reference/migrations/meta.json'));
+for (let patch = 6; patch <= 20; patch += 1) {
+  assert.ok(migrationMeta.pages.includes(`1.1.${patch}`), `迁移导航缺少 1.1.${patch}`);
+}
+assert.match(read('content/docs/reference/migrations/1.1.20.mdx'), /1\.1\.17 用户应直接升级到 1\.1\.20/);
 
 const stableLibraries = [
   ['yanju', '1.2.0', '1.1.6', 'content/docs/ecosystem/yanju/index.mdx', '/ecosystem/yanju/'],
