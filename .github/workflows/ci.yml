@@ -61,8 +61,12 @@ jobs:
           test "$("$core" examples/language/问候项目.yx)" = $'你好，言序\n你好，开发者'
 
   desktop-examples:
-    name: 桌面生态示例
+    name: 桌面生态示例（言序 ${{ matrix.yanxu }}）
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        yanxu: ['1.1.9', '1.1.20']
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
       - name: 安装原生窗口运行依赖
@@ -71,14 +75,15 @@ jobs:
           sudo apt-get -o Acquire::Retries=5 install -y \
             libfontconfig1 libwayland-client0 libxkbcommon0 libxkbcommon-x11-0 \
             libx11-6 xvfb
-      - name: 检出言序 1.1.9（言界已验证基线）
+      - name: 检出言序 ${{ matrix.yanxu }}
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           repository: YanXuLang/yanxu
-          ref: v1.1.9
+          ref: v${{ matrix.yanxu }}
           path: target/yanxu-core
-      - name: 构建言序并锁定言界
+      - name: 构建言序并锁定言界 1.0
         run: |
+          grep -Fx '言界 = { 包 = "yanxu-ui", git = "https://github.com/yanxulang/yanxu-ui.git", 修订 = "v1.0.0", 版 = "^1.0" }' examples/desktop/言序.toml
           cargo build --manifest-path target/yanxu-core/Cargo.toml --locked --bin yanxu
           target/yanxu-core/target/debug/yanxu 包 更新 examples/desktop
       - name: 核对文档源码、格式与静态类型
