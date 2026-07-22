@@ -19,6 +19,7 @@
     "controls",
     "themes",
     "events",
+    "accessibility",
     "keyboard",
     "pointer",
     "text-ime",
