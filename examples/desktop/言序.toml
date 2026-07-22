@@ -1,18 +1,18 @@
 [包]
 格式 = 2
 名称 = "言序文档图形示例"
-版本 = "0.1.0"
+版本 = "1.0.0"
 言序 = ">=1.1.9"
 入口 = "自动关闭冒烟.yx"
 
 [依赖]
-言界 = { 包 = "yanxu-ui", git = "https://github.com/yanxulang/yanxu-ui.git", 修订 = "v0.1.1", 版 = "^0.1" }
+言界 = { 包 = "yanxu-ui", git = "https://github.com/yanxulang/yanxu-ui.git", 修订 = "v1.0.0", 版 = "^1.0" }
 
 [应用]
 类型 = "图形"
 名称 = "言序文档图形示例"
 标识 = "dev.yanxu.docs-gui-examples"
-版本 = "0.1.0"
+版本 = "1.0.0"
 
 [应用.窗口]
 宽 = 960
