@@ -1,20 +1,20 @@
 ---
 title: 图形界面概览
-description: 在稳定言窗 1.0 与言界、言台保留模式路线之间选择原生桌面 GUI。
+description: 在稳定言窗 1.0 与言界 1.0 保留模式路线之间选择原生桌面 GUI。
 ---
 
-言序提供两条并行的原生桌面路线。**言窗 1.0**直接以 ABI v2 封装 eframe/egui 与
-winit，适合需要稳定、完整控件和六目标发布的应用；**言界 + 言台**把高级控件保留在
-言序代码中，提供保留模式控件树和更强的主题/组合能力。两条路线都创建真实窗口，不
-依赖浏览器、Electron、WebView 或 DOM。
+言序提供两条并行的稳定原生桌面路线。**言窗 1.0**直接以 ABI v2 封装 eframe/egui 与
+winit，适合立即模式开发和 egui 控件生态；**言界 1.0 + 言台 1.0**把高级控件保留在
+言序代码中，提供保留模式控件树、确定的事件传播和可组合主题。两条路线都创建真实窗口，
+不依赖浏览器、Electron、WebView 或 DOM。
 
 ![言序原生 GUI 两条路线架构图](/desktop-architecture.svg)
 
 <Cards>
   <Card title="言窗 1.0" description="稳定立即模式 GUI、完整控件、资源生命周期与六目标制品" href="/ecosystem/desktop/gui/" />
   <Card title="选择路线" description="按稳定性、控件需求、事件模型和迁移成本选择" href="/ecosystem/desktop/choosing/" />
-  <Card title="言界快速开始" description="体验言序实现的保留模式控件树" href="/ecosystem/desktop/quick-start/" />
-  <Card title="言台架构" description="理解另一条路线的原生 ABI、事件、绘制和资源边界" href="/ecosystem/desktop/platform-architecture/" />
+  <Card title="言界 1.0 快速开始" description="创建生产支持的保留模式桌面应用" href="/ecosystem/desktop/quick-start/" />
+  <Card title="言台 1.0 架构" description="理解原生 ABI、协议、资源配额和无障碍边界" href="/ecosystem/desktop/platform-architecture/" />
 </Cards>
 
 ## 平台范围
@@ -22,13 +22,14 @@ winit，适合需要稳定、完整控件和六目标发布的应用；**言界 
 | 路线 | 版本 | 最低言序 | Windows | macOS | Linux GNU |
 | --- | ---: | ---: | --- | --- | --- |
 | 言窗 `yanxu-gui` | 1.0.0 | 1.1.12 | x86-64 / ARM64 | x86-64 / ARM64 | x86-64 / ARM64 |
-| 言界 0.1.1 + 言台 0.1.0 | 0.1.x | 1.1.9 | x86-64 / ARM64 | x86-64 / ARM64 | x86-64 / ARM64 |
+| 言界 + 言台 | 1.0.0 | 1.1.9 | x86-64 / ARM64 | x86-64 / ARM64 | x86-64 / ARM64 |
 
-言窗 1.0 的 Linux GNU 制品最高需要 glibc 2.39；不支持 musl、WebAssembly、移动平台
-或 32 位目标。言界/言台有独立版本和兼容文档，升级一条路线不会隐式升级另一条。
+言窗 1.0 的 Linux GNU 制品最高需要 glibc 2.39；两条路线都不支持 musl、WebAssembly、
+移动平台或 32 位目标。言界 1.0 的正式 YXB 使用言序 1.1.20 构建，同时保留言序 1.1.9
+源码兼容门禁。言界、言台与言窗各自版本化，升级一条路线不会隐式升级另一条。
 
-<Callout type="warning" title="言界 0.1.1 的当前兼容缺口">
-  言界 0.1.1 的发布门禁只验证言序 1.1.9；其源码目前不能通过言序 1.1.20 的静态检查，言包 0.6.1 又要求核心至少 1.1.17。当前稳定工具链的新项目应选择言窗 1.0。言界页面保留为锁定 1.1.9 + 言包 0.5.0 的预览路线，等待后续言界版本重新建立兼容线。
+<Callout type="info" title="两条路线都可用于稳定项目">
+  言界 1.0 已冻结公开 API、言台 1.0 协议组合和六目标发布契约。选型应依据编程模型、控件需求和部署验证，不再需要因工具链兼容缺口回退到言窗。
 </Callout>
 
 ## 两条路线的边界
@@ -40,6 +41,6 @@ egui 后端实现。言界中的按钮、输入、列表、布局、状态与事
 两条路线不能在同一个原生窗口混用控件树，也不公开操作系统句柄。可在不同应用中并存，
 迁移应按独立产品或窗口渐进完成。
 
-稳定言窗源码与 Release 位于[yanxu-gui](https://github.com/yanxulang/yanxu-gui)。另一条
+稳定言窗源码与 Release 位于[yanxu-gui](https://github.com/yanxulang/yanxu-gui)。保留模式
 路线位于[yanxu-platform](https://github.com/yanxulang/yanxu-platform)和
-[yanxu-ui](https://github.com/yanxulang/yanxu-ui)。
+[yanxu-ui](https://github.com/yanxulang/yanxu-ui)，两个仓库均从`v1.0.0`提供稳定支持。
