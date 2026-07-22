@@ -1,23 +1,23 @@
 lock_version = 2
-manifest_checksum = "9287fbf4340310fae1aeef66c4eb2aafca93c0c74a6d31b13eac3bbabe5ac5a8"
+manifest_checksum = "6c55aec4be9991dabc748e93b85c2b82a8c066bfd9ef5e8809a9ed317d596789"
 target = "aarch64-apple-darwin"
-generator = "1.1.9"
+generator = "1.1.20"
 
 [root_dependencies]
-"言界" = "yanxu-ui@0.1.1#44f9b5e8534a-193ba75d1d46bdf0"
+"言界" = "yanxu-ui@1.0.0#44f9b5e8534a-cfb7de23c2dcbb76"
 
 [root_dev_dependencies]
 
 [[package]]
-id = "yanxu-platform@0.1.0#d95caa6bf952-93c96bdb2e39ad2a"
+id = "yanxu-platform@1.0.0#d95caa6bf952-c0ebb9773aa5a4d9"
 name = "yanxu-platform"
-version = "0.1.0"
+version = "1.0.0"
 source = "git:https://github.com/yanxulang/yanxu-platform.git"
-revision = "c9aac937942cf81bfdfb285f6b50afcb56a49a86"
-checksum = "93c96bdb2e39ad2a8bf740dc24bb71082a232dc44885e5a9f07c05dea38b5e24"
+revision = "9b6bce794a2e23fba04340f762e3d8f49a2724ff"
+checksum = "c0ebb9773aa5a4d9e889213ef085d9f75f5959f7cc5b63aa7c60f4e83f5df0ad"
 entry = "src/主.yx"
 target = "aarch64-apple-darwin"
-minimum_yanxu = ">=1.1.7"
+minimum_yanxu = ">=1.1.7, <2.0.0"
 
 [package.dependencies]
 
@@ -28,26 +28,28 @@ minimum_yanxu = ">=1.1.7"
 abi = 2
 target = "aarch64-apple-darwin"
 path = "dist/aarch64-apple-darwin/libyanxu_platform_native.dylib"
-checksum = "ad91b0a85a9f39926dc2b2127a648b29eaff2e4b3521be893f7c11ec7ffc3c9c"
-size = 4670368
+checksum = "4ba2a55db0828178d67c555500844bc2e03856bef79aeddae96bf0d3bfec6fdb"
+size = 6129760
 
 [[package]]
-id = "yanxu-ui@0.1.1#44f9b5e8534a-193ba75d1d46bdf0"
+id = "yanxu-ui@1.0.0#44f9b5e8534a-cfb7de23c2dcbb76"
 name = "yanxu-ui"
-version = "0.1.1"
+version = "1.0.0"
 source = "git:https://github.com/yanxulang/yanxu-ui.git"
-revision = "fb7776baa05ba4ec950696eb9a4cc1f11f290638"
-checksum = "193ba75d1d46bdf0489fc5c7efd667f4f1c3dad0ee578d2461c84e2bc44494c9"
+revision = "5818a5aa76790f85480c90b3ce80be73df3f11b9"
+checksum = "cfb7de23c2dcbb76a4eafc265217fcb33ef19d065b36cf12c22c3902ee34eae1"
 entry = "src/主.yx"
 target = "aarch64-apple-darwin"
 minimum_yanxu = ">=1.1.9"
 
 [package.dependencies]
-"言台" = "yanxu-platform@0.1.0#d95caa6bf952-93c96bdb2e39ad2a"
+"言台" = "yanxu-platform@1.0.0#d95caa6bf952-c0ebb9773aa5a4d9"
 "言据" = "言据@1.1.2#9f376cc5bbdb-224c315783494338"
 
 [package.exports]
 "几何" = "src/核心/几何.yx"
+"叠层" = "src/叠层/公共.yx"
+"数据源" = "src/数据/源.yx"
 "文本" = "src/文本/文档.yx"
 "脏区" = "src/核心/脏区.yx"
 "配置" = "src/样式/配置.yx"
