@@ -1,7 +1,7 @@
 lock_version = 2
 manifest_checksum = "6c55aec4be9991dabc748e93b85c2b82a8c066bfd9ef5e8809a9ed317d596789"
 target = "aarch64-apple-darwin"
-generator = "1.1.20"
+generator = "1.1.9"
 
 [root_dependencies]
 "言界" = "yanxu-ui@1.0.0#44f9b5e8534a-cfb7de23c2dcbb76"
