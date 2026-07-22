@@ -3,7 +3,9 @@ title: macOS 支持
 description: 在 Intel 与 Apple Silicon macOS 构建、验证和发布原生应用。
 ---
 
-首版正式支持`x86_64-apple-darwin`与`aarch64-apple-darwin`。两个目标都在对应 macOS 执行器完成原生 Release 构建、言序集成、示例构建与真实窗口冒烟。
+1.0 正式支持`x86_64-apple-darwin`与`aarch64-apple-darwin`。两个目标都在对应 macOS
+执行器完成原生 Release 构建、ABI 导出、言序集成、言界全部公开示例、真实窗口与
+NSAccessibility 语义树自动退出验收。
 
 言台通过 winit 的 AppKit 后端接收窗口、键盘、指针、触控板手势、拖放和输入法事件。`主`修饰键对应 Command。公开 API 不返回`NSWindow`、Cocoa 对象或原始指针；应用也不需要 Objective-C 分支。
 
@@ -12,6 +14,7 @@ description: 在 Intel 与 Apple Silicon macOS 构建、验证和发布原生应
 - 分别生成 Intel 与 Apple Silicon 锁文件和`.app` Bundle；
 - 在系统中文输入法中检查组合、候选窗与中英文／Emoji 混排；
 - 检查 Retina 与外接非 Retina 显示器之间移动；
+- 使用 VoiceOver 检查焦点、名称、表单状态、列表项与动作；
 - 确认应用名称、标识、版本、图标和资源进入 Bundle；
 - 如需要对外分发，在产物验证后另行执行 Apple 签名与公证流程。
 
