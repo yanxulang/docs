@@ -14,6 +14,7 @@
     "ui-architecture",
     "---应用与控件---",
     "app-loop",
+    "lifecycle-diagnostics",
     "windows",
     "layout",
     "controls",
