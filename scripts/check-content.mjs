@@ -96,7 +96,8 @@ assert.match(read('app/layout.tsx'), /metadataBase:\s*new URL\('https:\/\/docs\.
 
 const docsCi = read('.github/workflows/ci.yml');
 assert.match(docsCi, /name: 入门语言示例[\s\S]*?ref: v1\.1\.20/, '语言示例 CI 未固定言序 1.1.20');
-assert.match(docsCi, /name: 桌面生态示例[\s\S]*?ref: v1\.1\.9/, '言界示例 CI 未固定已验证的言序 1.1.9');
+assert.match(docsCi, /yanxu: \['1\.1\.9', '1\.1\.20'\]/, '言界示例 CI 未覆盖最低与当前工具链');
+assert.match(docsCi, /ref: v\$\{\{ matrix\.yanxu \}\}/, '言界示例 CI 未按矩阵固定工具链标签');
 assert.match(read('content/docs/language/binary-data.mdx'), /单值硬上限为 16 MiB/);
 assert.match(read('content/docs/reference/project-format.mdx'), /\| 字节码块 \| 2 \| 2 \|/);
 assert.match(read('content/docs/reference/permissions.mdx'), /15 项宿主能力/);
@@ -115,16 +116,55 @@ for (const requirement of [
 }
 const desktopManifest = read('examples/desktop/言序.toml');
 assert.match(desktopManifest, /言序 = ">=1\.1\.9"/);
-assert.match(desktopManifest, /修订 = "v0\.1\.1"/);
+assert.match(desktopManifest, /版本 = "1\.0\.0"/);
+assert.match(desktopManifest, /修订 = "v1\.0\.0"/);
+assert.match(desktopManifest, /版 = "\^1\.0"/);
+for (const permission of ['图形界面', '原生扩展', '剪贴板', '文件对话框']) {
+  assert.match(desktopManifest, new RegExp(`^${permission} = true$`, 'm'), `桌面示例缺少 ${permission} 权限`);
+}
 const desktopLock = read('examples/desktop/言序.lock');
 assert.match(desktopLock, /generator = "1\.1\.9"/);
-assert.match(desktopLock, /yanxu-ui@0\.1\.1/);
+assert.match(desktopLock, /target = "aarch64-apple-darwin"/);
+assert.match(desktopLock, /yanxu-ui@1\.0\.0/);
+assert.match(desktopLock, /yanxu-platform@1\.0\.0/);
 assert.match(desktopLock, /minimum_yanxu = ">=1\.1\.9"/);
+assert.match(desktopLock, /\[package\.native\][\s\S]*?abi = 2/);
 const desktopCompatibility = read('content/docs/ecosystem/desktop/compatibility.mdx');
-for (const requirement of ['1.1.9', '1.1.20', '0.5.0', '0.6.1', '0.1.1', '1.1.2']) {
+for (const requirement of [
+  '1.1.9', '1.1.20', '0.6.1', '1.0.0', '1.1.2',
+  '平台 1.7', '事件 1.3', '无障碍 1.0', '绘制 1.1', '70 个稳定错误码',
+]) {
   assert.ok(desktopCompatibility.includes(requirement), `桌面兼容矩阵缺少 ${requirement}`);
 }
-assert.match(desktopCompatibility, /不存在“言序 1\.1\.20 \+ 言包 0\.6\.1 \+ 言界 0\.1\.1”/);
+const desktopMeta = JSON.parse(read('content/docs/ecosystem/desktop/meta.json'));
+for (const page of [
+  'accessibility', 'lifecycle-diagnostics', 'forms', 'overlays-menus', 'data-views', 'animation',
+]) {
+  assert.ok(desktopMeta.pages.includes(page), `桌面 1.0 导航缺少 ${page}`);
+}
+assert.equal(
+  firstCodeBlock(read('content/docs/ecosystem/desktop/complete-example.mdx'), 'yanxu'),
+  read('examples/desktop/综合控件展示.yx'),
+  '言界完整示例与可运行源码不一致',
+);
+const desktopPages = desktopMeta.pages
+  .filter((page) => !page.startsWith('---'))
+  .map((page) => read(`content/docs/ecosystem/desktop/${page}.mdx`))
+  .join('\n');
+assert.doesNotMatch(desktopPages, /yanxu-(?:ui|platform)\/blob\/v0\./, '桌面 1.0 文档仍链接 0.x 上游文档');
+assert.doesNotMatch(desktopPages, /言界 0\.1\.1|言台 0\.1\.0/, '桌面 1.0 文档仍把旧预览版写成当前版本');
+for (const requirement of [
+  '30 个声明', '23 个类', '7 个包级函数', '125 个域', '375 个方法',
+]) {
+  assert.ok(read('content/docs/ecosystem/desktop/api-reference.mdx').includes(requirement),
+    `言界 1.0 API 参考缺少 ${requirement}`);
+}
+for (const requirement of [
+  '平台协议为`1.7`', '事件协议为`1.3`', '无障碍协议为`1.0`', 'YXDR 1.1',
+]) {
+  assert.ok(read('content/docs/ecosystem/desktop/platform-architecture.mdx').includes(requirement),
+    `言台 1.0 架构缺少 ${requirement}`);
+}
 
 const stableLibraries = [
   ['yanju', '1.2.0', '1.1.6', 'content/docs/ecosystem/yanju/index.mdx', '/ecosystem/yanju/'],
